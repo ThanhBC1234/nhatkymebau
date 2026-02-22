@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mây Bay Lòng Vòng - STOP 4P</title>
+    <style>
+        /* --- BỐI CẢNH --- */
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%); /* Trời xanh dịu */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- MẶT TRỜI --- */
+        .sun {
+            position: absolute;
+            top: 40px; right: 40px;
+            width: 70px; height: 70px;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 50px #FFD700;
+            opacity: 0.9;
+        }
+
+        /* --- KHUNG NHẬP LIỆU --- */
+        #input-container {
+            z-index: 100;
+            text-align: center;
+            transition: opacity 0.5s, transform 0.5s;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            max-width: 90%;
+            width: 400px;
+        }
+
+        h2 { color: #00838F; margin-top: 0; }
+        
+        input[type="text"] {
+            padding: 12px; width: 80%;
+            border: 2px solid #B2EBF2; border-radius: 10px;
+            font-size: 16px; outline: none; margin-bottom: 15px;
+        }
+
+        button {
+            padding: 12px 30px;
+            background-color: #00BCD4; color: white;
+            border: none; border-radius: 25px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        button:hover { background-color: #0097A7; transform: translateY(-2px); }
+
+        /* --- CẤU TRÚC ĐÁM MÂY (CSS MỚI) --- */
+        .cloud-wrapper {
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%); /* Điểm xuất phát ở giữa màn hình */
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .cloud-body {
+            /* Dùng biến CSS để đồng bộ màu giữa thân và các cục bông */
+            --cloud-color: #fff; 
+            background: var(--cloud-color);
+            
+            /* Tự động co giãn theo nội dung */
+            display: inline-block;
+            min-width: 120px;
+            max-width: 250px; /* Giới hạn chiều rộng để chữ tự xuống dòng */
+            padding: 15px 25px;
+            border-radius: 50px; /* Bo tròn thân */
+            
+            position: relative;
+            color: #444; /* Màu chữ xám đậm dễ đọc trên nền pastel */
+            font-size: 16px;
+            line-height: 1.4;
+            text-align: center;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            
+            /* Xử lý chữ dài */
+            word-wrap: break-word; 
+            white-space: normal;
+        }
+
+        /* Tạo hình dáng mây bằng pseudo-elements */
+        .cloud-body::before, .cloud-body::after {
+            content: '';
+            background: var(--cloud-color); /* Lấy màu từ biến */
+            position: absolute;
+            border-radius: 50%;
+            z-index: -1; /* Nằm dưới lớp chữ */
+        }
+
+        .cloud-body::before {
+            width: 50px; height: 50px;
+            top: -20px; left: 15px;
+        }
+
+        .cloud-body::after {
+            width: 60px; height: 60px;
+            top: -30px; right: 15px;
+        }
+
+        /* --- ANIMATION BAY LÒNG VÒNG (Bezier Curve) --- */
+        
+        /* Bay sang PHẢI với quỹ đạo lượn sóng */
+        @keyframes meanderRight {
+            0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
+            10% { transform: translate(-50%, -50%) scale(1); opacity: 1; } /* Hiện ra */
+            
+            25% { transform: translate(10vw, -100px) rotate(5deg); } /* Lượn lên */
+            50% { transform: translate(30vw, 50px) rotate(-5deg); }  /* Lượn xuống */
+            75% { transform: translate(60vw, -30px) rotate(3deg); }  /* Lượn lên */
+            
+            100% { transform: translate(110vw, 0px); opacity: 0; } /* Bay mất */
+        }
+
+        /* Bay sang TRÁI với quỹ đạo lượn sóng */
+        @keyframes meanderLeft {
+            0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
+            10% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            
+            25% { transform: translate(-10vw, 80px) rotate(-5deg); }
+            50% { transform: translate(-35vw, -40px) rotate(5deg); }
+            75% { transform: translate(-65vw, 20px) rotate(-3deg); }
+            
+            100% { transform: translate(-110vw, 0px); opacity: 0; }
+        }
+
+        .flying-right { animation: meanderRight 20s linear forwards; }
+        .flying-left { animation: meanderLeft 22s linear forwards; }
+
+    </style>
+</head>
+<body>
+
+    <div class="sun"></div>
+
+    <div id="input-container">
+        <h2>O - Quan Sát Suy Nghĩ</h2>
+        <p>Suy nghĩ nào đang làm phiền chị? Hãy viết nó ra và để gió cuốn đi.</p>
+        <input type="text" id="thoughtInput" placeholder="Ví dụ: Cảm thấy mệt mỏi..." autocomplete="off">
+        <br>
+        <button onclick="createCloud()">Hóa thành Mây</button>
+    </div>
+
+    <script>
+        const inputContainer = document.getElementById('input-container');
+        const thoughtInput = document.getElementById('thoughtInput');
+
+        // Danh sách màu pastel cho mây (Trắng, Hồng, Vàng, Xanh, Tím)
+        const cloudColors = [
+            '#FFFFFF', // Trắng
+            '#FFEBEE', // Hồng phấn
+            '#FFF9C4', // Vàng nhạt
+            '#E1F5FE', // Xanh dương nhạt
+            '#F3E5F5', // Tím nhạt
+            '#E0F2F1'  // Xanh ngọc
+        ];
+
+        function createCloud() {
+            const text = thoughtInput.value.trim();
+            if (text === "") { alert("Chị hãy viết gì đó nhé!"); return; }
+
+            // 1. Ẩn giao diện nhập
+            inputContainer.style.opacity = '0';
+            inputContainer.style.pointerEvents = 'none';
+
+            // 2. Tạo mây
+            const cloudWrapper = document.createElement('div');
+            cloudWrapper.classList.add('cloud-wrapper');
+
+            const cloudBody = document.createElement('div');
+            cloudBody.classList.add('cloud-body');
+            cloudBody.innerText = text;
+
+            // --- XỬ LÝ MÀU SẮC NGẪU NHIÊN ---
+            const randomColor = cloudColors[Math.floor(Math.random() * cloudColors.length)];
+            cloudBody.style.setProperty('--cloud-color', randomColor);
+
+            // --- XỬ LÝ HƯỚNG BAY NGẪU NHIÊN ---
+            const direction = Math.random() > 0.5 ? 'flying-right' : 'flying-left';
+            cloudWrapper.classList.add(direction);
+
+            // --- XỬ LÝ ĐỘ CAO KHỞI ĐIỂM NGẪU NHIÊN (Để không bị trùng vị trí cũ) ---
+            const startOffset = Math.floor(Math.random() * 60) - 30; // Lệch lên xuống +/- 30px
+            cloudWrapper.style.marginTop = `${startOffset}px`;
+
+            cloudWrapper.appendChild(cloudBody);
+            document.body.appendChild(cloudWrapper);
+
+            // 3. Reset form
+            thoughtInput.value = '';
+
+            // 4. Hiện lại form sau 4 giây
+            setTimeout(() => {
+                inputContainer.style.opacity = '1';
+                inputContainer.style.pointerEvents = 'auto';
+                thoughtInput.placeholder = "Còn suy nghĩ nào nữa không?";
+                thoughtInput.focus();
+            }, 4000);
+
+            // 5. Xóa mây sau khi bay xong (25s cho chắc chắn)
+            setTimeout(() => {
+                cloudWrapper.remove();
+            }, 25000);
+        }
+
+        // Bấm Enter để gửi
+        thoughtInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") createCloud();
+        });
+
+    </script>
+
+</body>
+</html>
