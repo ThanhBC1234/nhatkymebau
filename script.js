@@ -8,6 +8,12 @@ let currentUser = {
     phone: '',
     name: '',
     initialMood: 0,
+    // --- THÊM 4 DÒNG NÀY VÀO ---
+    dragonBreaths: 0,       // Đếm số lần hít thở Rồng
+    painAreas: '',          // Lưu các vùng đau & số lần (dạng chuỗi)
+    eval1: 5,               // Câu hỏi đánh giá 1
+    eval2: 5,               // Câu hỏi đánh giá 2
+    // ----------------------------
     capybaraMood: '',
     cloudThought: '',
     jarNote: '',
@@ -586,6 +592,11 @@ function startBreath(e) {
     if(e.cancelable && e.type === 'touchstart') e.preventDefault();
     if (s2_isHolding) return; 
     
+    // --- THÊM DÒNG NÀY ---
+    currentUser.dragonBreaths += 1; 
+    console.log("Số lần hít thở:", currentUser.dragonBreaths);
+    // ---------------------
+
     s2_isHolding = true; 
     s2_energy = 0; 
     
@@ -599,6 +610,16 @@ function startBreath(e) {
     mouth.className = "mouth smile";
 }
 
+// Tìm thêm hàm initDragon() ngay phía trên và thêm dòng reset biến:
+function initDragon() { 
+    s2_speed = 2; 
+    s2_rotation = 0; 
+    s2_energy = 0;
+    s2_isHolding = false;
+    currentUser.dragonBreaths = 0; // Thêm dòng này để reset khi chơi lại
+    if(fire) fire.classList.remove("active");
+    if(belly) belly.classList.remove("inhaling");
+}
 function releaseBreath(e) {
     const now = Date.now();
     if (now - lastInteractionTime < 300) return;
@@ -972,7 +993,7 @@ function finishJourney() {
 
     // 3. --- GỬI TOÀN BỘ DỮ LIỆU LÊN GOOGLE SHEETS ---
     // ĐỔI ĐƯỜNG LINK CỦA BẠN VÀO DÒNG BÊN DƯỚI:
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCuMvgB0w0WTxWInWTAkbEtVfM5hG7R7Id-F_oYJN3-4zUVLdd4IoxqZKHTU0qgSts/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBPW14Kt92qp6wjoLoVn13YMtMbdraXiSoHgbHDsT6ETukiKbih73nOL_cVSpX6q_1/exec";
 
     // Vô hiệu hóa nút và đổi chữ để người chơi biết đang lưu
     const btn = document.querySelector('#stage-7 .btn-start');
@@ -1291,7 +1312,85 @@ function deleteJourney(id) {
     })
     .catch(err => console.error(err));
 }
+/* =======================================================
+   LOGIC MÀN HÌNH "CẢM NHẬN NỖI ĐAU" & "ĐÁNH GIÁ"
+======================================================== */
+const painAreasConfig = [
+    { id: 'head', name: 'Đầu/Cổ', top: '25%', left: '50%' },
+    { id: 'shoulders', name: 'Vai', top: '28%', left: '50%' },
+    { id: 'chest', name: 'Ngực', top: '38%', left: '50%' },
+    { id: 'belly', name: 'Bụng', top: '53%', left: '50%' },
+    { id: 'hips', name: 'Hông/Lưng', top: '63%', left: '50%' },
+    { id: 'legs', name: 'Chân', top: '90%', left: '50%' }
+];
+let selectedPainsThisSession = {}; 
 
+function initPainMap() {
+    selectedPainsThisSession = {}; 
+    const container = document.getElementById('pain-map-svg-container');
+    
+    // SVG Mẹ Bầu
+    let svgHTML = `<svg viewBox="0 0 320 480" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
+        <path d="M 120 125 Q 160 145 200 125 L 230 215 C 260 315 300 395 310 435 Q 160 455 10 435 C 20 395 60 315 90 215 Z" style="fill: #F8BBD0;" />
+        <path d="M 120 135 Q 100 195 140 245 L 155 255 L 120 135 Z" fill="#FFCCBC" />
+        <path d="M 200 135 Q 220 195 180 245 L 165 255 L 200 135 Z" fill="#FFCCBC" />
+        <circle cx="160" cy="70" r="38" fill="#FFCCBC" />
+        <path d="M 124 60 Q 160 75 196 60 Q 196 45 160 40 Q 124 45 124 60 Z" fill="#5D4037" />
+    </svg>`;
+    container.innerHTML = svgHTML;
+
+    // Nút bấm
+    painAreasConfig.forEach(area => {
+        const dot = document.createElement('div');
+        dot.style.position = 'absolute'; dot.style.top = area.top; dot.style.left = area.left;
+        dot.style.width = '30px'; dot.style.height = '30px';
+        dot.style.background = 'white'; dot.style.border = '3px solid #ccc';
+        dot.style.borderRadius = '50%'; dot.style.transform = 'translate(-50%, -50%)';
+        dot.style.zIndex = '10'; dot.style.cursor = 'pointer'; dot.style.transition = 'all 0.3s';
+        
+        dot.onclick = () => togglePainDot(area.id, area.name, dot);
+        container.appendChild(dot);
+    });
+}
+
+function togglePainDot(id, name, dotElement) {
+    if(navigator.vibrate) navigator.vibrate(20);
+    if (selectedPainsThisSession[id]) {
+        delete selectedPainsThisSession[id]; // Hủy
+        dotElement.style.background = 'white'; dotElement.style.borderColor = '#ccc'; dotElement.style.boxShadow = 'none';
+    } else {
+        selectedPainsThisSession[id] = name; // Chọn
+        dotElement.style.background = '#d32f2f'; dotElement.style.borderColor = '#b71c1c'; dotElement.style.boxShadow = '0 0 15px rgba(211, 47, 47, 0.6)';
+    }
+}
+
+function submitPainMap() {
+    let historyKey = 'pain_history_' + currentUser.phone;
+    let painHistory = JSON.parse(localStorage.getItem(historyKey)) || {};
+    let finalResultArray = [];
+
+    for (let id in selectedPainsThisSession) {
+        let name = selectedPainsThisSession[id];
+        if (!painHistory[id]) painHistory[id] = 0;
+        painHistory[id] += 1; // Cộng dồn
+        finalResultArray.push(`${name} (${painHistory[id]} lần)`);
+    }
+
+    localStorage.setItem(historyKey, JSON.stringify(painHistory));
+    currentUser.painAreas = finalResultArray.length > 0 ? finalResultArray.join(', ') : "Không mỏi";
+    
+    switchStage(3); // Xong thì sang Body Scan
+}
+
+function submitEval1() {
+    currentUser.eval1 = document.getElementById('eval-1-range').value;
+    switchStage('eval-2');
+}
+
+function submitEval2() {
+    currentUser.eval2 = document.getElementById('eval-2-range').value;
+    switchStage(7); 
+}
 
 
 
