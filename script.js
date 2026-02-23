@@ -13,6 +13,8 @@ let currentUser = {
     jarNote: '',
     finalMood: 0
 };
+
+
 // Hàm 1: Kiểm tra số điện thoại
 function checkPhone() {
     const phoneInput = document.getElementById('input-phone').value.trim();
@@ -1289,8 +1291,6 @@ function deleteJourney(id) {
     })
     .catch(err => console.error(err));
 }
-
-
 
 
 
