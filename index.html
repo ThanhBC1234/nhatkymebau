@@ -8,9 +8,159 @@
 </head>
 <body>
 
-    <div id="app"></div>
-    
     <canvas id="fireworks-canvas"></canvas>
+
+    <button id="back-btn" onclick="goBack()">🔙 Quay lại</button>
+
+    <div id="stage-0" class="stage active" style="display: flex;">
+        <div id="welcome-modal" class="welcome-container">
+            <h1>Chào mừng</h1>
+            <p class="welcome-sub">Hành trình tìm lại bình an</p>
+            <div id="step-phone">
+                <input type="number" id="input-phone" placeholder="Nhập số điện thoại của chị...">
+                <button class="btn-start" onclick="checkPhone()">Tiếp tục</button>
+            </div>
+            <div id="step-name" style="display:none;">
+                <input type="text" id="input-name" placeholder="Tên của chị là...">
+                <button class="btn-start" onclick="registerAndStart()">Bắt đầu</button>
+            </div>
+            <div id="step-welcome-back" style="display:none;">
+                <div id="welcome-message"></div>
+                <button class="btn-start" onclick="startGameDirectly()">Tiếp tục hành trình</button>
+                <button class="btn-history" onclick="showMyHistory()">Xem nhật ký của tôi</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="stage-emotion-check" class="stage">
+        <h2 style="color: #00695c;">Chị đang cảm thấy thế nào?</h2>
+        <div id="current-emoji" style="font-size: 80px; margin: 20px 0;">😐</div>
+        <div id="current-status" style="font-size: 24px; font-weight: bold; color: #f57f17; margin-bottom: 30px;">5 - Bình thường (Ổn)</div>
+        <div style="width: 80%; max-width: 400px;">
+            <input type="range" id="emotion-range" min="1" max="10" value="5" oninput="updateEmotionDisplay()" style="width: 100%;">
+        </div>
+        <button class="btn-start" style="margin-top: 40px;" onclick="submitInitialEmotion()">Xác nhận</button>
+    </div>
+
+    <div id="stage-1" class="stage">
+        <div id="greeting-text"></div>
+        <div id="monkey-metaphor">Tâm trí xáo trộn như bầy khỉ...</div>
+        <div id="scene-s1" class="garden-scene"></div>
+        <div id="top-message-area"></div>
+        <div id="countdown-display"></div>
+        <div id="controls-container">
+            <button id="stop-btn" onmousedown="startProcess(event)" onmouseup="cancelProcess()" onmouseleave="cancelProcess()" ontouchstart="startProcess(event)" ontouchend="cancelProcess()">🛑</button>
+            <div id="guide-text-s1">Nhấn giữ chuông để ra lệnh<br>"DỪNG LẠI"</div>
+        </div>
+        <div id="success-panel">
+            <button class="next-btn" onclick="switchStage(2)">Tiếp tục</button>
+        </div>
+    </div>
+
+    <div id="stage-2" class="stage">
+        <div id="instruction-dragon">Hít vào...</div>
+        <div class="game-scene">
+            <div class="dragon-container">
+                <div class="head">
+                    <div class="eye"></div><div class="cheek"></div>
+                    <div id="mouth" class="mouth smile"></div>
+                    <div id="fire" class="fire-stream"></div>
+                </div>
+                <div class="body"><div id="belly" class="belly"></div></div>
+                <div class="arm left"></div><div class="arm right"></div>
+            </div>
+            <div class="pinwheel-wrapper">
+                <div class="stick"></div>
+                <div id="pinwheel" class="pinwheel-container">
+                    <div class="blade b1"></div><div class="blade b2"></div>
+                    <div class="blade b3"></div><div class="blade b4"></div>
+                    <div class="center-dot"></div>
+                </div>
+            </div>
+        </div>
+        <button id="interaction-area" style="margin-top: 30px;">Nhấn giữ để Hít vào</button>
+        <button id="next-btn-dragon" onclick="switchStage(3)" style="display:none;">Tiếp tục</button>
+    </div>
+
+    <div id="stage-3" class="stage">
+        <div id="guide-text-body"></div>
+        <div id="meditation-container"></div>
+        <div id="action-buttons-body">
+            <button id="continue-btn-body" onclick="switchStage(4)">Tiếp tục</button>
+        </div>
+    </div>
+
+    <div id="stage-4" class="stage">
+        <div id="selection-screen">
+            <h2>Cảm xúc của chị lúc này?</h2>
+            <p class="subtitle">Hãy chọn một bé Capybara nhé</p>
+            <div class="emotion-grid">
+                <div class="capy-card" onclick="selectEmotion('Vui vẻ')"><p>Vui vẻ</p></div>
+                <div class="capy-card" onclick="selectEmotion('Bình an')"><p>Bình an</p></div>
+                <div class="capy-card" onclick="selectEmotion('Buồn bã')"><p>Buồn bã</p></div>
+                <div class="capy-card" onclick="selectEmotion('Lo âu')"><p>Lo âu</p></div>
+                <div class="capy-card" onclick="selectEmotion('Tức giận')"><p>Tức giận</p></div>
+                <div class="capy-card" onclick="selectEmotion('Trống rỗng')"><p>Trống rỗng</p></div>
+            </div>
+        </div>
+        <div id="feedback-screen">
+            <div class="feedback-text">Cảm ơn chị đã nhận diện cảm xúc của mình.</div>
+            <button class="btn-next-capy" onclick="switchStage(5)">Tiếp tục</button>
+        </div>
+    </div>
+
+    <div id="stage-5" class="stage">
+        <div class="sun"></div>
+        <div id="hint-text-cloud"></div>
+        <div id="input-container-cloud">
+            <h2>O - Quan Sát Suy Nghĩ</h2>
+            <p>Suy nghĩ nào đang làm phiền chị? Hãy viết ra và để gió cuốn đi.</p>
+            <input type="text" id="thoughtInput" placeholder="Ví dụ: Cảm thấy mệt mỏi..." autocomplete="off">
+            <button class="btn-primary" onclick="createCloud()">Hóa thành Mây</button>
+            <button class="btn-secondary" onclick="switchStage(6)">Đi tiếp</button>
+        </div>
+    </div>
+
+    <div id="stage-6" class="stage">
+        <div id="intro-screen-jar">
+            <div class="instruction-text">Hãy viết một lời nhắn nhủ...</div>
+            <button class="btn-start" onclick="goToWrite()">Bắt đầu viết</button>
+        </div>
+        <div id="write-screen-jar">
+            <div class="heart-note">
+                <textarea id="note-input" placeholder="Gửi gắm yêu thương..."></textarea>
+            </div>
+            <button class="btn" onclick="saveToJar()">Cất vào hũ</button>
+        </div>
+        <div id="jar-screen-final">
+            <div class="jar" id="jar"></div>
+            <div id="final-message">Yêu thương đã được cất giữ!</div>
+            <button id="continue-btn-jar" onclick="switchStage(7)">Bước cuối cùng</button>
+        </div>
+    </div>
+
+    <div id="stage-7" class="stage">
+        <h2 style="color: #00695c;">Bây giờ chị cảm thấy thế nào?</h2>
+        <div id="final-emoji" style="font-size: 80px; margin: 20px 0;">😐</div>
+        <div id="final-status" style="font-size: 24px; font-weight: bold; color: #f57f17; margin-bottom: 30px;">5 - Bình thường</div>
+        <div style="width: 80%; max-width: 400px;">
+            <input type="range" id="final-range" min="1" max="10" value="5" oninput="updateFinalEmotionDisplay()" style="width: 100%;">
+        </div>
+        <button class="btn-start" style="margin-top: 40px;" onclick="finishJourney()">Lưu Hành Trình</button>
+    </div>
+
+    <div id="admin-modal" style="display:none; position:fixed; z-index:9999; background:white; width:100%; height:100%; top:0; left:0; overflow:auto; padding: 20px;">
+        <button class="btn-history" onclick="closeAdmin()">Đóng Admin</button>
+        <h2>Bảng Quản Trị Hệ Thống</h2>
+        <table border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <tbody id="admin-table-body"></tbody>
+        </table>
+    </div>
+    <div id="my-history-modal" style="display:none; position:fixed; z-index:9999; background:white; width:100%; height:100%; top:0; left:0; overflow:auto; padding: 20px;">
+        <button class="btn-history" onclick="closeMyHistory()">Đóng</button>
+        <h2 style="text-align:center; color: #00695c;">Nhật Ký Bình An Của Chị</h2>
+        <div id="my-history-content"></div>
+    </div>
 
     <script src="script.js"></script>
 </body>
