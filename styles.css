@@ -1291,6 +1291,46 @@ html, body {
     transform: scale(1.02);    
     box-shadow: 0 6px 15px rgba(0,0,0,0.2);
 }
+/* =========================================
+   SỬA LỖI: ÉP CĂN GIỮA TOÀN BỘ CÁC MÀN HÌNH
+   ========================================= */
+
+/* 1. Ép màn hình 1 (Khỉ) tuân thủ luật căn giữa */
+#stage-1 { display: none; }
+#stage-1.active { display: flex !important; }
+
+/* 2. Màn hình 2 (Rồng): Bỏ ghim cứng chữ và nút, tạo khoảng cách tự nhiên */
+#stage-2 { gap: 15px !important; }
+#stage-2 #instruction-dragon { 
+    position: relative !important; 
+    top: auto !important; 
+    margin-bottom: 20px; 
+}
+#stage-2 #interaction-area, 
+#stage-2 #next-btn-dragon { 
+    position: relative !important; 
+    bottom: auto !important; 
+    margin-top: 10px; 
+}
+
+/* 3. Màn hình 3 (Body Scan cũ & mới): Bỏ ghim cứng dòng chữ hướng dẫn */
+#stage-3 #guide-text-body { 
+    position: relative !important; 
+    top: auto !important; 
+    margin-bottom: 30px; 
+}
+
+/* 4. Màn hình 5 (Đám mây): Mang hộp nhập liệu từ dưới đáy lên ngay chính giữa màn hình */
+#stage-5 #input-container-cloud { 
+    top: 50% !important; 
+    bottom: auto !important; 
+    transform: translate(-50%, -50%) !important; 
+}
+/* Hiệu ứng ẩn hộp nhập đám mây bay xuống dưới */
+#stage-5 #input-container-cloud.hidden { 
+    top: 150% !important; 
+    transform: translate(-50%, 0) scale(0.8) !important; 
+}
 
 
 
