@@ -972,7 +972,7 @@ function finishJourney() {
 
     // 3. --- GỬI TOÀN BỘ DỮ LIỆU LÊN GOOGLE SHEETS ---
     // ĐỔI ĐƯỜNG LINK CỦA BẠN VÀO DÒNG BÊN DƯỚI:
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZ6w63fwkEZSj4KdJH_DIYq6unkdJfb5ssKGNzgs-rMrH2cZ-9fvjUdY4k5AVc8nF6/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCuMvgB0w0WTxWInWTAkbEtVfM5hG7R7Id-F_oYJN3-4zUVLdd4IoxqZKHTU0qgSts/exec";
 
     // Vô hiệu hóa nút và đổi chữ để người chơi biết đang lưu
     const btn = document.querySelector('#stage-7 .btn-start');
@@ -1291,6 +1291,7 @@ function deleteJourney(id) {
     })
     .catch(err => console.error(err));
 }
+
 
 
 
