@@ -2,226 +2,272 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mây Bay Lòng Vòng - STOP 4P</title>
-    <style>
-        /* --- BỐI CẢNH --- */
-        body {
-            margin: 0;
-            height: 100vh;
-            background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%); /* Trời xanh dịu */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* --- MẶT TRỜI --- */
-        .sun {
-            position: absolute;
-            top: 40px; right: 40px;
-            width: 70px; height: 70px;
-            background: #FFD700;
-            border-radius: 50%;
-            box-shadow: 0 0 50px #FFD700;
-            opacity: 0.9;
-        }
-
-        /* --- KHUNG NHẬP LIỆU --- */
-        #input-container {
-            z-index: 100;
-            text-align: center;
-            transition: opacity 0.5s, transform 0.5s;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            max-width: 90%;
-            width: 400px;
-        }
-
-        h2 { color: #00838F; margin-top: 0; }
-        
-        input[type="text"] {
-            padding: 12px; width: 80%;
-            border: 2px solid #B2EBF2; border-radius: 10px;
-            font-size: 16px; outline: none; margin-bottom: 15px;
-        }
-
-        button {
-            padding: 12px 30px;
-            background-color: #00BCD4; color: white;
-            border: none; border-radius: 25px;
-            font-size: 16px; font-weight: bold; cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        button:hover { background-color: #0097A7; transform: translateY(-2px); }
-
-        /* --- CẤU TRÚC ĐÁM MÂY (CSS MỚI) --- */
-        .cloud-wrapper {
-            position: absolute;
-            left: 50%; top: 50%;
-            transform: translate(-50%, -50%); /* Điểm xuất phát ở giữa màn hình */
-            pointer-events: none;
-            z-index: 50;
-        }
-
-        .cloud-body {
-            /* Dùng biến CSS để đồng bộ màu giữa thân và các cục bông */
-            --cloud-color: #fff; 
-            background: var(--cloud-color);
-            
-            /* Tự động co giãn theo nội dung */
-            display: inline-block;
-            min-width: 120px;
-            max-width: 250px; /* Giới hạn chiều rộng để chữ tự xuống dòng */
-            padding: 15px 25px;
-            border-radius: 50px; /* Bo tròn thân */
-            
-            position: relative;
-            color: #444; /* Màu chữ xám đậm dễ đọc trên nền pastel */
-            font-size: 16px;
-            line-height: 1.4;
-            text-align: center;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-            
-            /* Xử lý chữ dài */
-            word-wrap: break-word; 
-            white-space: normal;
-        }
-
-        /* Tạo hình dáng mây bằng pseudo-elements */
-        .cloud-body::before, .cloud-body::after {
-            content: '';
-            background: var(--cloud-color); /* Lấy màu từ biến */
-            position: absolute;
-            border-radius: 50%;
-            z-index: -1; /* Nằm dưới lớp chữ */
-        }
-
-        .cloud-body::before {
-            width: 50px; height: 50px;
-            top: -20px; left: 15px;
-        }
-
-        .cloud-body::after {
-            width: 60px; height: 60px;
-            top: -30px; right: 15px;
-        }
-
-        /* --- ANIMATION BAY LÒNG VÒNG (Bezier Curve) --- */
-        
-        /* Bay sang PHẢI với quỹ đạo lượn sóng */
-        @keyframes meanderRight {
-            0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
-            10% { transform: translate(-50%, -50%) scale(1); opacity: 1; } /* Hiện ra */
-            
-            25% { transform: translate(10vw, -100px) rotate(5deg); } /* Lượn lên */
-            50% { transform: translate(30vw, 50px) rotate(-5deg); }  /* Lượn xuống */
-            75% { transform: translate(60vw, -30px) rotate(3deg); }  /* Lượn lên */
-            
-            100% { transform: translate(110vw, 0px); opacity: 0; } /* Bay mất */
-        }
-
-        /* Bay sang TRÁI với quỹ đạo lượn sóng */
-        @keyframes meanderLeft {
-            0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
-            10% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            
-            25% { transform: translate(-10vw, 80px) rotate(-5deg); }
-            50% { transform: translate(-35vw, -40px) rotate(5deg); }
-            75% { transform: translate(-65vw, 20px) rotate(-3deg); }
-            
-            100% { transform: translate(-110vw, 0px); opacity: 0; }
-        }
-
-        .flying-right { animation: meanderRight 20s linear forwards; }
-        .flying-left { animation: meanderLeft 22s linear forwards; }
-
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Hành Trình STOP 4P</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <div class="sun"></div>
+    <canvas id="fireworks-canvas"></canvas>
+    <button id="back-btn" onclick="goBack()">← Quay lại</button>
+    <div id="stage-0" class="stage active" style="display: flex; justify-content: center; align-items: center;">
+    
+    <div id="welcome-modal" style="background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 90%;">
+        
+        <h2 style="color: #D81B60; margin-bottom: 10px;">Chào chị,</h2>
+        
+        <div id="step-phone">
+            <p style="color: #666; margin-bottom: 20px;">Vui lòng nhập số điện thoại để hệ thống ghi nhớ chị nhé.</p>
+            <input type="tel" id="input-phone" placeholder="Số điện thoại..." 
+                   style="width: 100%; padding: 15px; border: 2px solid #FFCDD2; border-radius: 30px; margin-bottom: 20px; font-size: 16px; outline: none; text-align: center; box-sizing: border-box;">
+            <button onclick="checkPhone()" 
+                    style="background: #E91E63; color: white; border: none; padding: 15px 40px; border-radius: 30px; font-size: 16px; cursor: pointer; font-weight: bold; width: 100%;">
+                Tiếp tục
+            </button>
+        </div>
 
-    <div id="input-container">
-        <h2>O - Quan Sát Suy Nghĩ</h2>
-        <p>Suy nghĩ nào đang làm phiền chị? Hãy viết nó ra và để gió cuốn đi.</p>
-        <input type="text" id="thoughtInput" placeholder="Ví dụ: Cảm thấy mệt mỏi..." autocomplete="off">
-        <br>
-        <button onclick="createCloud()">Hóa thành Mây</button>
+        <div id="step-name" style="display: none;">
+            <p style="color: #666; margin-bottom: 20px;">Chị là thành viên mới. Chị tên là gì ạ?</p>
+            <input type="text" id="input-name" placeholder="Tên của chị là..." 
+                   style="width: 100%; padding: 15px; border: 2px solid #FFCDD2; border-radius: 30px; margin-bottom: 20px; font-size: 16px; outline: none; text-align: center; box-sizing: border-box;">
+            <button onclick="registerAndStart()" 
+                    style="background: #E91E63; color: white; border: none; padding: 15px 40px; border-radius: 30px; font-size: 16px; cursor: pointer; font-weight: bold; width: 100%;">
+                Bắt đầu hành trình
+            </button>
+        </div>
+
+        <div id="step-welcome-back" style="display: none;">
+            <p id="welcome-message" style="color: #666; margin-bottom: 20px; font-size: 18px;">Chào mừng chị quay lại!</p>
+            <button onclick="startGameDirectly()" 
+                    style="background: #4CAF50; color: white; border: none; padding: 15px 40px; border-radius: 30px; font-size: 16px; cursor: pointer; font-weight: bold; width: 100%;">
+                Vào chơi thôi
+             </button>
+             <button onclick="showMyHistory()" 
+                    style="
+                        background-color: #00897b; /* Màu xanh ngọc đậm đà hơn */
+                        color: white;              /* Chữ trắng */
+                        border: none;              /* 🔥 XÓA CÁI VIỀN ĐEN XẤU XÍ */
+                        padding: 12px 24px;        /* Nút to và dày hơn */
+                        border-radius: 50px;       /* Bo tròn mềm mại giống nút trên */
+                        font-size: 16px;           /* Chữ to rõ */
+                        font-weight: bold;         /* Chữ đậm */
+                        cursor: pointer;           /* Con trỏ chuột biến thành bàn tay */
+                        margin-top: 15px;          /* Cách nút trên ra một chút */
+                        width: 100%;               /* Dài bằng nút trên */
+                        box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Đổ bóng nhẹ cho nổi */
+                        transition: all 0.3s ease; /* Hiệu ứng mượt mà */"
+                        onmouseover="this.style.backgroundColor='#00796b'; this.style.transform='scale(1.02)'"
+                        onmouseout="this.style.backgroundColor='#00897b'; this.style.transform='scale(1)'"
+>
+                            📖 Xem lại Nhật Ký của mình
+                        </button>
+            </div>
+
+        </div>
     </div>
 
-    <script>
-        const inputContainer = document.getElementById('input-container');
-        const thoughtInput = document.getElementById('thoughtInput');
+    <div id="stage-emotion-check" class="stage" style="display: none;">
+        <div class="welcome-container" style="width: 90%; max-width: 500px; margin: 0 auto; padding: 20px; border-radius: 20px;">
+            <h2 style="color: #00796B;">Trước khi bắt đầu, chị cảm thấy thế nào?</h2>
+            <p style="color: #666;">Hãy kéo thanh trượt để chọn mức độ phù hợp nhất nhé.</p>
 
-        // Danh sách màu pastel cho mây (Trắng, Hồng, Vàng, Xanh, Tím)
-        const cloudColors = [
-            '#FFFFFF', // Trắng
-            '#FFEBEE', // Hồng phấn
-            '#FFF9C4', // Vàng nhạt
-            '#E1F5FE', // Xanh dương nhạt
-            '#F3E5F5', // Tím nhạt
-            '#E0F2F1'  // Xanh ngọc
-        ];
+            <div id="emotion-display-area" style="margin: 30px 0; transition: all 0.3s;">
+                <div id="current-emoji" style="font-size: 80px; margin-bottom: 10px;">😐</div>
+                <div id="current-status" style="font-size: 24px; font-weight: bold; color: #F57F17;">5 - Bình thường (Ổn)</div>
+            </div>
 
-        function createCloud() {
-            const text = thoughtInput.value.trim();
-            if (text === "") { alert("Chị hãy viết gì đó nhé!"); return; }
+            <div class="slider-container" style="position: relative; padding: 0 20px; margin-bottom: 40px;">
+                <input type="range" min="1" max="10" value="5" id="emotion-range" 
+                       style="width: 100%; height: 15px; border-radius: 10px; background: linear-gradient(to right, #1a237e, #4a148c, #b71c1c, #f57f17, #fdd835, #66bb6a, #00c853); outline: none; -webkit-appearance: none; cursor: pointer;"
+                       oninput="updateEmotionDisplay()">
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 10px; color: #888; font-size: 14px;">
+                    <span>1 (Tuyệt vọng)</span>
+                    <span>10 (Rất tuyệt vời)</span>
+                </div>
+            </div>
 
-            // 1. Ẩn giao diện nhập
-            inputContainer.style.opacity = '0';
-            inputContainer.style.pointerEvents = 'none';
+            <button class="btn-start" onclick="submitInitialEmotion()">Xác nhận & Tiếp tục</button>
+        </div>
+    </div>
+    
+    <div id="stage-1" class="stage">
+        <div id="greeting-text"></div> 
+        <div id="monkey-metaphor">Những suy nghĩ trong đầu như những chú khỉ đang chạy nhảy lung tung...</div>
+        <div id="top-message-area"></div>
+        <div class="garden-scene" id="scene-s1"></div>
 
-            // 2. Tạo mây
-            const cloudWrapper = document.createElement('div');
-            cloudWrapper.classList.add('cloud-wrapper');
+        <div id="countdown-display"></div>
+        <div id="controls-container">
+            <button id="stop-btn" onmousedown="startProcess(event)" onmouseup="cancelProcess()" onmouseleave="cancelProcess()" ontouchstart="startProcess(event)" ontouchend="cancelProcess()">🔔</button>
+            <div id="guide-text-s1">Nhấn giữ chuông để ra lệnh<br>"DỪNG LẠI"</div>
+            <div id="success-panel">
+                <div class="fountain">⛲</div>
+                <div class="congrats-text">
+                    🎉 Chúc mừng chị đã hoàn thành trò chơi đầu tiên.<br> Cùng tiếp tục <b>HÀNH TRÌNH BÌNH AN</b> chị nhé.
+                </div>
+                <button class="next-btn" onclick="switchStage(2)">TIẾP TỤC</button>
+            </div>
+        </div>
+    </div>
 
-            const cloudBody = document.createElement('div');
-            cloudBody.classList.add('cloud-body');
-            cloudBody.innerText = text;
+    <div id="stage-2" class="stage">
+        <div id="instruction-dragon">Nhấn giữ để HÍT VÀO...</div>
+        <div class="game-scene">
+            <div class="dragon-container">
+                <div class="fire-stream" id="fire"></div>
+                <div class="head">
+                    <div class="eye"></div>
+                    <div class="cheek"></div>
+                    <div class="mouth smile" id="mouth"></div>
+                </div>
+                <div class="body"></div>
+                <div class="belly" id="belly"></div>
+                <div class="arm left"></div>
+                <div class="arm right"></div>
+            </div>
+            <div class="pinwheel-wrapper">
+                <div class="stick"></div>
+                <div class="pinwheel-container" id="pinwheel">
+                    <div class="blade b1"></div><div class="blade b2"></div>
+                    <div class="blade b3"></div><div class="blade b4"></div>
+                    <div class="center-dot"></div>
+                </div>
+            </div>
+        </div>
+        <button id="interaction-area">Nhấn giữ</button>
+        <button id="next-btn-dragon" onclick="switchStage(3)">Tiếp tục hành trình →</button>
+    </div>
 
-            // --- XỬ LÝ MÀU SẮC NGẪU NHIÊN ---
-            const randomColor = cloudColors[Math.floor(Math.random() * cloudColors.length)];
-            cloudBody.style.setProperty('--cloud-color', randomColor);
+    <div id="stage-3" class="stage">
+        <div id="guide-text-body">Hãy bắt đầu rà soát cơ thể mẹ và bé...</div>
+        <div id="meditation-container">
+            </div>
+        <div id="action-buttons-body">
+            <button id="continue-btn-body" onclick="switchStage(4)">Tiếp tục hành trình →</button>
+            <button id="restart-btn-body" onclick="initBodyScan()">↺ Thực hành lại</button>
+        </div>
+    </div>
 
-            // --- XỬ LÝ HƯỚNG BAY NGẪU NHIÊN ---
-            const direction = Math.random() > 0.5 ? 'flying-right' : 'flying-left';
-            cloudWrapper.classList.add(direction);
+    <div id="stage-4" class="stage">
+        <div id="selection-screen">
+            <h2>Cảm xúc hiện tại của chị giống bé Capybara nào nhất?</h2>
+            <p class="subtitle">Gọi tên cảm xúc giúp giảm đi sự mơ hồ trong tâm trí...</p>
+            <div class="emotion-grid">
+                <div class="capy-card" onclick="selectEmotion('Vui vẻ')"><img src="vui.jpg" alt="Vui vẻ" class="capy-img"></div>
+                <div class="capy-card" onclick="selectEmotion('Buồn')"><img src="buồn.jpg" alt="Buồn" class="capy-img"></div>
+                <div class="capy-card" onclick="selectEmotion('Lo lắng')"><img src="khóc.jpg" alt="Lo lắng" class="capy-img"></div>
+                <div class="capy-card" onclick="selectEmotion('Khó chịu')"><img src="tức.jpg" alt="Khó chịu" class="capy-img"></div>
+                <div class="capy-card" onclick="selectEmotion('Hoảng hốt')"><img src="hoảng hốt.jpg" alt="Hoảng hốt" class="capy-img"></div>
+                <div class="capy-card" onclick="selectEmotion('Mệt mỏi')"><img src="khó chịu.jpg" alt="Mệt mỏi" class="capy-img"></div>
+            </div>
+        </div>
+        <div id="feedback-screen">
+            <div class="feedback-text">"Cảm ơn chị đã dũng cảm gọi tên cảm xúc.<br>Bây giờ, mình cùng trút bỏ gánh nặng nhé."</div>
+            <button class="btn-next-capy" onclick="switchStage(5)">Tiếp tục hành trình →</button>
+        </div>
+    </div>
 
-            // --- XỬ LÝ ĐỘ CAO KHỞI ĐIỂM NGẪU NHIÊN (Để không bị trùng vị trí cũ) ---
-            const startOffset = Math.floor(Math.random() * 60) - 30; // Lệch lên xuống +/- 30px
-            cloudWrapper.style.marginTop = `${startOffset}px`;
+    <div id="stage-5" class="stage">
+        <div class="sun"></div>
+        <div id="hint-text-cloud">Chạm vào bầu trời để viết tiếp...</div>
+        <div id="input-container-cloud">
+            <h2>Quan Sát Suy Nghĩ</h2>
+            <p>Suy nghĩ nào đang làm phiền chị?<br>Hãy viết nó ra và để gió cuốn đi.</p>
+            <input type="text" id="thoughtInput" placeholder="Ví dụ: lo lắng..." autocomplete="off">
+            <button id="sendBtn" class="btn-primary" onclick="createCloud(event)">Hít vào và dán lên đám mây</button>
+            <button class="btn-secondary" onclick="switchStage(6)">Tiếp tục hành trình →</button>
+        </div>
+    </div>
 
-            cloudWrapper.appendChild(cloudBody);
-            document.body.appendChild(cloudWrapper);
+    <div id="stage-6" class="stage">
+        <div id="intro-screen-jar">
+            <div class="instruction-text">Để kết thúc bài thực hành, chị hãy dành một khoảnh khắc kết nối với em bé hoặc với chính mình.<br><br>Hãy đặt 2 tay lên ngực và thầm nói:</div>
+            <div class="mantra">"Mẹ con mình cùng Bình An nhé"</div>
+            <button class="btn" id="connect-btn-s6" onclick="goToWrite()">Đã kết nối</button>
+        </div>
+        <div id="write-screen-jar">
+            <div style="margin-bottom: 20px; font-size: 18px; color: #880e4f;">Viết lời nhắn yêu thương lên trái tim này:</div>
+            <div class="heart-note"><textarea id="note-input" placeholder="Nhắn nhủ điều gì đó..."></textarea></div>
+            <button class="btn" onclick="saveToJar()">Cất vào Hũ Bình An</button>
+        </div>
+        <div id="jar-screen-final">
+            <div class="jar" id="jar">
+                <div class="small-heart" style="bottom: 10px; left: 30px; transform: rotate(-30deg) scale(0.8); background:#f48fb1"></div>
+                <div class="small-heart" style="bottom: 20px; right: 40px; transform: rotate(-60deg) scale(0.7); background:#f06292"></div>
+                <div class="small-heart" style="bottom: 40px; left: 60px; transform: rotate(-15deg) scale(0.6); background:#f8bbd0"></div>
+            </div>
+            <div id="final-message">Chúc hai mẹ con luôn Bình An! ❤️</div>
+            <button id="continue-btn-jar" class="btn" onclick="switchStage(7)">Tiếp tục hành trình →</button>
+        </div>
+    </div>
 
-            // 3. Reset form
-            thoughtInput.value = '';
+    <div id="stage-7" class="stage">
+        <div class="welcome-container" style="width: 90%; max-width: 500px; margin: 0 auto; padding: 20px; border-radius: 20px;">
+            <h2 style="color: #00796B;">Sau hành trình, chị cảm thấy thế nào?</h2>
+            <p style="color: #666;">Hãy kéo thanh trượt để chọn mức độ phù hợp nhất nhé.</p>
+            
+            <div class="emotion-display-area" style="margin: 30px 0;">
+                <div id="final-emoji" style="font-size: 80px;">🙂</div>
+                <div id="final-status" style="font-size: 24px; font-weight: bold; color: #F57F17;">6 - Tương đối tốt</div>
+            </div>
 
-            // 4. Hiện lại form sau 4 giây
-            setTimeout(() => {
-                inputContainer.style.opacity = '1';
-                inputContainer.style.pointerEvents = 'auto';
-                thoughtInput.placeholder = "Còn suy nghĩ nào nữa không?";
-                thoughtInput.focus();
-            }, 4000);
+            <div class="slider-container" style="padding: 0 10px;">
+                <input type="range" min="1" max="10" value="6" id="final-range" 
+       oninput="updateFinalEmotionDisplay()" 
+       style="background: linear-gradient(to right, #1a237e, #4a148c, #b71c1c, #f57f17, #fdd835, #66bb6a, #00c853);">
+                
+                <div style="display: flex; justify-content: space-between; color: #888; font-size: 14px;">
+                    <span>1 (Tuyệt vọng)</span><span>10 (Rất tuyệt vời)</span>
+                </div>
+            </div>
 
-            // 5. Xóa mây sau khi bay xong (25s cho chắc chắn)
-            setTimeout(() => {
-                cloudWrapper.remove();
-            }, 25000);
-        }
+            <button class="btn btn-start" onclick="finishJourney()" style="margin-top: 20px;">Hoàn thành</button>
+        </div>
+    </div>
 
-        // Bấm Enter để gửi
-        thoughtInput.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") createCloud();
-        });
+    <div id="admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 9999; overflow-y: auto;">
+    <div style="max-width: 1000px; margin: 50px auto; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #d81b60; padding-bottom: 10px;">
+            <h2 style="color: #d81b60; margin: 0;">🔐 QUẢN TRỊ VIÊN</h2>
+            <button onclick="closeAdmin()" style="background: #333; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 5px;">Thoát X</button>
+        </div>
 
-    </script>
+        <div style="margin-top: 20px;">
+            <button onclick="fetchHistory()" style="background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">🔄 Làm mới dữ liệu</button>
+        </div>
 
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <thead>
+                <tr style="background: #f8bbd0; color: #880e4f;">
+                    <th style="padding: 12px; border: 1px solid #ddd;">Ngày giờ</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Tên</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">SĐT</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Mood Đầu</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Capybara</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Đám mây</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Lời nhắn</th>
+                    <th style="padding: 12px; border: 1px solid #ddd;">Mood Cuối</th>
+                    <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="admin-table-body">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="my-history-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; overflow-y: auto;">
+    <div style="max-width: 600px; margin: 50px auto; background: white; padding: 25px; border-radius: 15px; text-align: center;">
+        <h2 style="color: #009688; margin-bottom: 20px;">📖 Nhật Ký Cảm Xúc</h2>
+        
+        <div id="my-history-content" style="max-height: 400px; overflow-y: auto; text-align: left;">
+            </div>
+
+        <button onclick="closeMyHistory()" style="margin-top: 20px; background: #555; padding: 10px 30px;">Đóng lại</button>
+    </div>
+</div>
+
+    <script src="script.js"></script>
 </body>
 </html>
