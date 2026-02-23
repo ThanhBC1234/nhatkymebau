@@ -144,7 +144,7 @@ function switchStage(stageNum) {
 
     const newStage = document.getElementById(`stage-${stageNum}`);
     if (newStage) {
-        newStage.style.display = (stageNum === 0) ? 'flex' : 'block'; 
+        newStage.style.display = 'flex';
         setTimeout(() => newStage.classList.add('active'), 10);
         currentStage = stageNum;
     }
@@ -658,3 +658,4 @@ document.addEventListener("DOMContentLoaded", function() {
        document.getElementById('welcome-modal').style.display = 'block';
    }
 });
+
