@@ -748,9 +748,8 @@ function finishJourney() {
         currentUser.finalMood = emotionLevels[val] ? emotionLevels[val].text : val; 
     }
     
+    // 1. Lưu tạm Offline để xem lịch sử (Giữ nguyên chuẩn cũ để bảng Lịch sử không bị lỗi)
     currentUser.created_at = new Date().toISOString(); 
-    
-    // 1. Lưu tạm Offline để xem lịch sử
     let history = JSON.parse(localStorage.getItem('myJourneys')) || []; 
     history.push(currentUser); 
     localStorage.setItem('myJourneys', JSON.stringify(history));
@@ -763,11 +762,25 @@ function finishJourney() {
         btn.style.opacity = '0.7'; 
     }
     
-    // 2. Gửi dữ liệu về Google Sheets (Sử dụng text/plain để vượt qua CORS)
+    // 2. TẠO BẢN SAO DỮ LIỆU ĐỂ GỬI & FORMAT LẠI THỜI GIAN CHO ĐẸP
+    let dataToSend = JSON.parse(JSON.stringify(currentUser)); // Tạo bản copy
+    
+    let now = new Date();
+    let dd = String(now.getDate()).padStart(2, '0');
+    let mm = String(now.getMonth() + 1).padStart(2, '0');
+    let yyyy = now.getFullYear();
+    let hh = String(now.getHours()).padStart(2, '0');
+    let min = String(now.getMinutes()).padStart(2, '0');
+    let ss = String(now.getSeconds()).padStart(2, '0');
+    
+    // Thay đổi ngày giờ thành chuẩn VN: "HH:MM:SS DD/MM/YYYY"
+    dataToSend.created_at = `${hh}:${min}:${ss} ${dd}/${mm}/${yyyy}`;
+
+    // 3. Gửi dữ liệu đã được làm đẹp về Google Sheets
     fetch(GOOGLE_SCRIPT_URL, { 
         method: 'POST', 
         headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
-        body: JSON.stringify(currentUser) 
+        body: JSON.stringify(dataToSend) 
     })
     .then(response => response.json())
     .then(data => { 
@@ -784,7 +797,6 @@ function finishJourney() {
         location.reload(); 
     });
 }
-
 function goBack() {
     if (currentStage === 'pain-map') { switchStage(2); return; } 
     if (currentStage === 3) { switchStage('pain-map'); return; } 
@@ -890,4 +902,5 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('welcome-modal').style.display = 'block'; 
     }
 });
+
 
