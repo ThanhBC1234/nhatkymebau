@@ -398,16 +398,45 @@ function submitEval2() { currentUser.eval2 = document.getElementById('eval-2-ran
 // 14. LƯU HÀNH TRÌNH & ĐIỀU HƯỚNG
 // ==========================================
 function finishJourney() {
-    const finalSlider = document.getElementById('final-range'); if(finalSlider && typeof emotionLevels !== 'undefined') { const val = parseInt(finalSlider.value); currentUser.finalMood = emotionLevels[val] ? emotionLevels[val].text : val; }
-    currentUser.created_at = new Date().toISOString(); let history = JSON.parse(localStorage.getItem('myJourneys')) || []; history.push(currentUser); localStorage.setItem('myJourneys', JSON.stringify(history));
-    const btn = document.querySelector('#stage-7 .btn-start'); if (btn) { btn.innerText = "Đang lưu..."; btn.style.pointerEvents = 'none'; btn.style.opacity = '0.7'; }
-    fetch(GOOGLE_FORM_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(currentUser) })
-    .then(() => { alert("Tuyệt vời! Hành trình bình an của chị đã được lưu lại."); location.reload(); })
-    .catch(error => { console.error(error); alert("Đã hoàn thành! (Dữ liệu đã lưu tạm trên thiết bị)."); location.reload(); });
-}
-function goBack() {
-    if (currentStage === 'pain-map') { switchStage(2); return; } if (currentStage === 3) { switchStage('pain-map'); return; } if (currentStage === 'eval-1') { switchStage(6); return; } if (currentStage === 'eval-2') { switchStage('eval-1'); return; } if (currentStage === 7) { switchStage('eval-2'); return; }
-    if (typeof currentStage === 'number' && currentStage > 0) switchStage(currentStage - 1);
+    const finalSlider = document.getElementById('final-range'); 
+    if(finalSlider && typeof emotionLevels !== 'undefined') { 
+        const val = parseInt(finalSlider.value); 
+        currentUser.finalMood = emotionLevels[val] ? emotionLevels[val].text : val; 
+    }
+    
+    currentUser.created_at = new Date().toISOString(); 
+    
+    // Lưu lịch sử vào máy để người dùng xem lại
+    let history = JSON.parse(localStorage.getItem('myJourneys')) || []; 
+    history.push(currentUser); 
+    localStorage.setItem('myJourneys', JSON.stringify(history));
+    
+    const btn = document.querySelector('#stage-7 .btn-start'); 
+    if (btn) { 
+        btn.innerText = "Đang lưu..."; 
+        btn.style.pointerEvents = 'none'; 
+        btn.style.opacity = '0.7'; 
+    }
+    
+    // --- ĐÃ SỬA LẠI ĐÚNG LINK GOOGLE SHEET CỦA BẠN ---
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjFIR53r-xpQiB1KCNsJBkFznrI5LzC2ZevIz1lc9baKnea7V_jEGakhQNcmbSmOhy/exec";
+
+    // Gửi thẳng lên Google Sheet
+    fetch(GOOGLE_SCRIPT_URL, { 
+        method: 'POST', 
+        mode: 'no-cors', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(currentUser) 
+    })
+    .then(() => { 
+        alert("Tuyệt vời! Hành trình bình an của chị đã được lưu vào dữ liệu."); 
+        location.reload(); 
+    })
+    .catch(error => { 
+        console.error(error); 
+        alert("Đã hoàn thành! (Dữ liệu đã lưu tạm trên thiết bị do lỗi mạng)."); 
+        location.reload(); 
+    });
 }
 
 // ==========================================
@@ -451,3 +480,4 @@ function deleteJourney(index) {
     }
 }
 document.addEventListener("DOMContentLoaded", function() { if(document.getElementById('welcome-modal')) document.getElementById('welcome-modal').style.display = 'block'; });
+
