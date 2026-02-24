@@ -1331,6 +1331,21 @@ html, body {
     top: 150% !important; 
     transform: translate(-50%, 0) scale(0.8) !important; 
 }
+/* =========================================
+   SỬA LỖI: ÉP CĂN GIỮA VÀ BỎ GHIM CỨNG
+   ========================================= */
+
+/* Ép các stage luôn dùng flex để tuân thủ luật căn giữa */
+.stage { display: none !important; }
+.stage.active { display: flex !important; }
+
+/* Màn hình Rồng: Gỡ ghim tuyệt đối, cho khoảng cách tự nhiên */
+#stage-2 { gap: 20px !important; }
+#stage-2 #instruction-dragon { position: relative !important; top: 0 !important; margin-bottom: 20px; }
+#stage-2 #interaction-area, #stage-2 #next-btn-dragon { position: relative !important; bottom: 0 !important; margin-top: 10px; }
+
+/* Màn hình Body Scan: Gỡ ghim chữ hướng dẫn */
+#stage-3 #guide-text-body { position: relative !important; top: 0 !important; margin-bottom: 30px; }
 
 
 
