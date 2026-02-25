@@ -961,9 +961,11 @@ function deleteJourney(index) {
 
 // Khởi chạy khi load xong web
 document.addEventListener("DOMContentLoaded", function() { 
-    if(document.getElementById('welcome-modal')) {
+    // Ép đổi màu nền ngay khi vừa mở web lên
+    document.body.style.background = stageBackgrounds[0];
+    
+    if(document.getElementById('welcome-modal')) { 
         document.getElementById('welcome-modal').style.display = 'block'; 
-    }
+    } 
 });
-
 
