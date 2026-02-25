@@ -1346,7 +1346,31 @@ html, body {
 
 /* Màn hình Body Scan: Gỡ ghim chữ hướng dẫn */
 #stage-3 #guide-text-body { position: relative !important; top: 0 !important; margin-bottom: 30px; }
+/* =========================================
+   ÉP ĐỔI MÀU NỀN & MÀU CHỮ CHO STAGE 0, 1, 2 
+   ========================================= */
 
+/* Gỡ bỏ màu nền cũ đang bị ghim cứng ở Stage 0 */
+#stage-0 {
+    background: transparent !important;
+}
+
+/* Đổi chữ ở Stage 1 (Khỉ) và Stage 2 (Rồng) sang màu trắng có bóng đổ để dễ đọc trên nền hồng */
+#greeting-text, 
+#monkey-metaphor, 
+#guide-text-s1, 
+.quiet-text, 
+#stage-1 .safe-quote,
+#instruction-dragon {
+    color: white !important;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
+}
+
+/* Đổi màu chuông ở Stage 1 cho hợp tone */
+#stage-1 #stop-btn {
+    background-color: white !important;
+    color: #d81b60 !important;
+}
 
 
 
