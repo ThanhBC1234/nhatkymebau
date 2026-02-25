@@ -413,20 +413,25 @@ window.addEventListener('touchend', releaseBreath);
 // ==========================================
 // 8. STAGE NỖI ĐAU (PAIN MAP)
 // ==========================================
+// ==========================================
+// 8. STAGE NỖI ĐAU (Đã chia tách Trái/Phải)
+// ==========================================
 const painAreasConfig = [
-    { id: 'head', name: 'Đầu/Cổ', top: '25%', left: '50%' }, 
-    { id: 'shoulders', name: 'Vai', top: '28%', left: '50%' }, 
-    { id: 'chest', name: 'Ngực', top: '38%', left: '50%' },
-    { id: 'belly', name: 'Bụng', top: '53%', left: '50%' }, 
-    { id: 'hips', name: 'Hông/Lưng', top: '63%', left: '50%' }, 
-    { id: 'legs', name: 'Chân', top: '90%', left: '50%' }
+    { id: 'head', name: 'Đầu/Cổ', points: [{ top: '25%', left: '50%' }] },
+    { id: 'shoulder_left', name: 'Vai trái', points: [{ top: '28%', left: '38%' }] },
+    { id: 'shoulder_right', name: 'Vai phải', points: [{ top: '28%', left: '62%' }] },
+    { id: 'chest', name: 'Ngực', points: [{ top: '38%', left: '50%' }] },
+    { id: 'belly', name: 'Bụng', points: [{ top: '53%', left: '50%' }] },
+    { id: 'hips', name: 'Hông/Lưng', points: [{ top: '63%', left: '50%' }] },
+    { id: 'leg_left', name: 'Chân trái', points: [{ top: '90%', left: '45%' }] },
+    { id: 'leg_right', name: 'Chân phải', points: [{ top: '90%', left: '55%' }] }
 ];
 
 let selectedPainsThisSession = {}; 
 
 function initPainMap() {
     selectedPainsThisSession = {}; 
-    const container = document.getElementById('pain-map-svg-container');
+    const container = document.getElementById('pain-map-svg-container'); 
     if (!container) return;
     
     container.innerHTML = `
@@ -439,29 +444,47 @@ function initPainMap() {
     </svg>`;
     
     painAreasConfig.forEach(area => {
-        const dot = document.createElement('div');
-        dot.style.position = 'absolute'; dot.style.top = area.top; dot.style.left = area.left; 
-        dot.style.width = '30px'; dot.style.height = '30px';
-        dot.style.background = 'white'; dot.style.border = '3px solid #ccc'; 
-        dot.style.borderRadius = '50%'; dot.style.transform = 'translate(-50%, -50%)'; 
-        dot.style.zIndex = '10'; dot.style.cursor = 'pointer'; dot.style.transition = 'all 0.3s';
-        dot.onclick = () => togglePainDot(area.id, area.name, dot); 
-        container.appendChild(dot);
+        area.points.forEach(point => {
+            const dot = document.createElement('div'); 
+            dot.className = `pain-dot-${area.id}`; 
+            dot.style.position = 'absolute'; 
+            dot.style.top = point.top; 
+            dot.style.left = point.left; 
+            dot.style.width = '30px'; 
+            dot.style.height = '30px';
+            dot.style.background = 'white'; 
+            dot.style.border = '3px solid #ccc'; 
+            dot.style.borderRadius = '50%'; 
+            dot.style.transform = 'translate(-50%, -50%)'; 
+            dot.style.zIndex = '10'; 
+            dot.style.cursor = 'pointer'; 
+            dot.style.transition = 'all 0.3s';
+            
+            dot.onclick = () => togglePainDot(area.id, area.name); 
+            container.appendChild(dot);
+        });
     });
 }
 
-function togglePainDot(id, name, dotElement) {
+function togglePainDot(id, name) {
     if(navigator.vibrate) navigator.vibrate(20);
+    
+    const dots = document.querySelectorAll(`.pain-dot-${id}`);
+    
     if (selectedPainsThisSession[id]) { 
         delete selectedPainsThisSession[id]; 
-        dotElement.style.background = 'white'; 
-        dotElement.style.borderColor = '#ccc'; 
-        dotElement.style.boxShadow = 'none'; 
+        dots.forEach(dot => {
+            dot.style.background = 'white'; 
+            dot.style.borderColor = '#ccc'; 
+            dot.style.boxShadow = 'none'; 
+        });
     } else { 
         selectedPainsThisSession[id] = name; 
-        dotElement.style.background = '#d32f2f'; 
-        dotElement.style.borderColor = '#b71c1c'; 
-        dotElement.style.boxShadow = '0 0 15px rgba(211, 47, 47, 0.6)'; 
+        dots.forEach(dot => {
+            dot.style.background = '#d32f2f'; 
+            dot.style.borderColor = '#b71c1c'; 
+            dot.style.boxShadow = '0 0 15px rgba(211, 47, 47, 0.6)'; 
+        });
     }
 }
 
@@ -470,17 +493,16 @@ function submitPainMap() {
     let painHistory = JSON.parse(localStorage.getItem(historyKey)) || {}; 
     let finalResultArray = [];
     
-    for (let id in selectedPainsThisSession) {
+    for (let id in selectedPainsThisSession) { 
         let name = selectedPainsThisSession[id]; 
         if (!painHistory[id]) painHistory[id] = 0; 
         painHistory[id] += 1; 
-        finalResultArray.push(`${name} (${painHistory[id]} lần)`);
+        finalResultArray.push(`${name} (${painHistory[id]} lần)`); 
     }
     
     localStorage.setItem(historyKey, JSON.stringify(painHistory)); 
     currentUser.painAreas = finalResultArray.length > 0 ? finalResultArray.join(', ') : "Không mỏi"; 
-    
-    switchStage(3);
+    switchStage(3); // Chuyển sang Body Scan
 }
 
 // ==========================================
