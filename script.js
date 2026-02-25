@@ -411,9 +411,6 @@ window.addEventListener('mouseup', releaseBreath);
 window.addEventListener('touchend', releaseBreath);
 
 // ==========================================
-// 8. STAGE NỖI ĐAU (PAIN MAP)
-// ==========================================
-// ==========================================
 // 8. STAGE NỖI ĐAU (Đã chia tách Trái/Phải)
 // ==========================================
 const painAreasConfig = [
@@ -489,20 +486,17 @@ function togglePainDot(id, name) {
 }
 
 function submitPainMap() {
-    let historyKey = 'pain_history_' + currentUser.phone; 
-    let painHistory = JSON.parse(localStorage.getItem(historyKey)) || {}; 
+    // 1. Chỉ lấy tên các vùng bị đau, bỏ hoàn toàn việc lưu lịch sử số lần
     let finalResultArray = [];
-    
     for (let id in selectedPainsThisSession) { 
-        let name = selectedPainsThisSession[id]; 
-        if (!painHistory[id]) painHistory[id] = 0; 
-        painHistory[id] += 1; 
-        finalResultArray.push(`${name} (${painHistory[id]} lần)`); 
+        finalResultArray.push(selectedPainsThisSession[id]); 
     }
     
-    localStorage.setItem(historyKey, JSON.stringify(painHistory)); 
+    // 2. Nối các tên lại bằng dấu phẩy, nếu không chọn gì thì ghi "Không mỏi"
     currentUser.painAreas = finalResultArray.length > 0 ? finalResultArray.join(', ') : "Không mỏi"; 
-    switchStage(3); // Chuyển sang Body Scan
+    
+    // 3. Chuyển sang màn hình Body Scan
+    switchStage(3); 
 }
 
 // ==========================================
