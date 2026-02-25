@@ -751,7 +751,9 @@ function submitEval1() {
 
 function submitEval2() { 
     currentUser.eval2 = document.getElementById('eval-2-range').value; 
-    switchStage(7); 
+    
+    // ĐÃ SỬA: Đánh giá 2 là bước cuối cùng, gọi hàm lưu hành trình tại đây
+    finishJourney(); 
 }
 
 // ==========================================
@@ -764,22 +766,22 @@ function finishJourney() {
         currentUser.finalMood = emotionLevels[val] ? emotionLevels[val].text : val; 
     }
     
-    // 1. Lưu tạm Offline để xem lịch sử (Giữ nguyên chuẩn cũ để bảng Lịch sử không bị lỗi)
+    // Lưu tạm Offline để xem lịch sử
     currentUser.created_at = new Date().toISOString(); 
     let history = JSON.parse(localStorage.getItem('myJourneys')) || []; 
     history.push(currentUser); 
     localStorage.setItem('myJourneys', JSON.stringify(history));
     
-    // Vô hiệu hóa nút khi đang gửi
-    const btn = document.querySelector('#stage-7 .btn-start'); 
+    // Hiển thị trạng thái đang lưu
+    const btn = document.querySelector('#stage-eval-2 .btn-start'); 
     if (btn) { 
         btn.innerText = "Đang lưu..."; 
         btn.style.pointerEvents = 'none'; 
         btn.style.opacity = '0.7'; 
     }
     
-    // 2. TẠO BẢN SAO DỮ LIỆU ĐỂ GỬI & FORMAT LẠI THỜI GIAN CHO ĐẸP
-    let dataToSend = JSON.parse(JSON.stringify(currentUser)); // Tạo bản copy
+    // TẠO BẢN SAO DỮ LIỆU ĐỂ GỬI & FORMAT LẠI THỜI GIAN
+    let dataToSend = JSON.parse(JSON.stringify(currentUser)); 
     
     let now = new Date();
     let dd = String(now.getDate()).padStart(2, '0');
@@ -789,10 +791,8 @@ function finishJourney() {
     let min = String(now.getMinutes()).padStart(2, '0');
     let ss = String(now.getSeconds()).padStart(2, '0');
     
-    // Thay đổi ngày giờ thành chuẩn VN: "HH:MM:SS DD/MM/YYYY"
     dataToSend.created_at = `${hh}:${min}:${ss} ${dd}/${mm}/${yyyy}`;
 
-    // 3. Gửi dữ liệu đã được làm đẹp về Google Sheets
     fetch(GOOGLE_SCRIPT_URL, { 
         method: 'POST', 
         headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
@@ -801,9 +801,9 @@ function finishJourney() {
     .then(response => response.json())
     .then(data => { 
         if(data.result === 'success') {
-            alert("Tuyệt vời! Hành trình bình an của chị đã được lưu lên Google Sheet."); 
+            alert("Tuyệt vời! Hành trình bình an của chị đã được lưu lại."); 
         } else {
-            alert("Có lỗi khi lưu lên Sheet: " + data.error);
+            alert("Có lỗi khi lưu lại: " + data.error);
         }
         location.reload(); 
     })
@@ -813,16 +813,26 @@ function finishJourney() {
         location.reload(); 
     });
 }
-function goBack() {
-    if (currentStage === 'pain-map') { switchStage(2); return; } 
-    if (currentStage === 3) { switchStage('pain-map'); return; } 
-    if (currentStage === 'eval-1') { switchStage(6); return; } 
-    if (currentStage === 'eval-2') { switchStage('eval-1'); return; } 
-    if (currentStage === 7) { switchStage('eval-2'); return; }
-    
-    if (typeof currentStage === 'number' && currentStage > 0) switchStage(currentStage - 1);
-}
 
+// Hàm quay lại với thứ tự: Hũ (6) -> Cảm xúc (7) -> Đánh giá 1 -> Đánh giá 2
+function goBack() {
+    if (currentStage === 1) { document.getElementById('stage-1').classList.remove('active'); document.getElementById('stage-1').style.display='none'; document.getElementById('stage-emotion-check').style.display='flex'; document.getElementById('stage-emotion-check').classList.add('active'); return; }
+    if (currentStage === 2) { switchStage(1); return; }
+    if (currentStage === 4) { switchStage(2); return; }
+    if (currentStage === 5) { switchStage(4); return; }
+    if (currentStage === 'pain-map') { switchStage(5); return; }
+    if (currentStage === 3) { switchStage('pain-map'); return; }
+    if (currentStage === 6) { switchStage(3); return; }
+    
+    // ĐÃ SỬA: Sắp xếp lại thứ tự lùi cho 3 trang cuối
+    if (currentStage === 7) { switchStage(6); return; }          // Cảm xúc cuối lùi về Hũ
+    if (currentStage === 'eval-1') { switchStage(7); return; }   // Đánh giá 1 lùi về Cảm xúc cuối
+    if (currentStage === 'eval-2') { switchStage('eval-1'); return; } // Đánh giá 2 lùi về Đánh giá 1
+    
+    switchStage(0);
+    const modal = document.getElementById('welcome-modal');
+    if(modal) { modal.style.display = 'block'; setTimeout(() => modal.style.opacity = '1', 10); }
+}
 // ==========================================
 // 15. TÍNH NĂNG ADMIN & LỊCH SỬ NGƯỜI DÙNG
 // ==========================================
