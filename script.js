@@ -23,17 +23,19 @@ let currentUser = {
 
 // Background gradient cho từng màn hình
 const stageBackgrounds = {
-    0: "linear-gradient(to bottom, #fffde7, #ffffff)",
+    0: "linear-gradient(to bottom, #E0F7FA, #B2EBF2)",
     1: "linear-gradient(to bottom, #a5d6a7, #e8f5e9)",
     2: "linear-gradient(to bottom, #e0f7fa, #e0f7fa)",
+    4: "linear-gradient(to bottom, #fff9c4, #fff176)", 
+    5: "linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%)", 
     'pain-map': "linear-gradient(to bottom, #ffebee, #ffcdd2)", 
-    3: "linear-gradient(to bottom, #e0f2f1, #b2dfdb)",
-    4: "linear-gradient(to bottom, #fff9c4, #fff176)",
-    5: "linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%)",
-    6: "linear-gradient(to top, #fce4ec, #f8bbd0)",
-    'eval-1': "linear-gradient(to bottom, #e0f7fa, #b2ebf2)",
-    'eval-2': "linear-gradient(to bottom, #e0f7fa, #b2ebf2)",
-    7: "linear-gradient(to top, #fce4ec, #f8bbd0)"
+    3: "linear-gradient(to bottom, #e0f2f1, #b2dfdb)", 
+    6: "linear-gradient(to top, #fce4ec, #f8bbd0)", 
+    
+    // ĐÃ ÁP DỤNG MÃ MÀU BẠN YÊU CẦU CHO 3 MÀN CUỐI
+    7: "linear-gradient(45deg, #ec407a, #d81b60)",
+    'eval-1': "linear-gradient(45deg, #ec407a, #d81b60)",
+    'eval-2': "linear-gradient(45deg, #ec407a, #d81b60)"
 };
 
 // ==========================================
