@@ -23,9 +23,9 @@ let currentUser = {
 
 // Background gradient cho từng màn hình
 const stageBackgrounds = {
-    0: "linear-gradient(to bottom, #E0F7FA, #B2EBF2)",
-    1: "linear-gradient(to bottom, #a5d6a7, #e8f5e9)",
-    2: "linear-gradient(to bottom, #e0f7fa, #e0f7fa)",
+    0: "linear-gradient(to bottom, #ec407a, #d81b60)",
+    1: "linear-gradient(to bottom, #ec407a, #d81b60)",
+    2: "linear-gradient(to bottom, #ec407a, #d81b60)",
     4: "linear-gradient(to bottom, #fff9c4, #fff176)", 
     5: "linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%)", 
     'pain-map': "linear-gradient(to bottom, #ffebee, #ffcdd2)", 
