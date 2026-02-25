@@ -22,22 +22,25 @@ let currentUser = {
 };
 
 // Background gradient cho từng màn hình
-const stageBackgrounds = {
-    0: "linear-gradient(to bottom, #ec407a, #d81b60)",
-    1: "linear-gradient(to bottom, #ec407a, #d81b60)",
-    2: "linear-gradient(to bottom, #ec407a, #d81b60)",
-    4: "linear-gradient(to bottom, #fff9c4, #fff176)", 
-    5: "linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%)", 
-    'pain-map': "linear-gradient(to bottom, #ffebee, #ffcdd2)", 
-    3: "linear-gradient(to bottom, #e0f2f1, #b2dfdb)", 
-    6: "linear-gradient(to top, #fce4ec, #f8bbd0)", 
-    
-    // ĐÃ ÁP DỤNG MÃ MÀU BẠN YÊU CẦU CHO 3 MÀN CUỐI
-    7: "linear-gradient(45deg, #ec407a, #d81b60)",
-    'eval-1': "linear-gradient(45deg, #ec407a, #d81b60)",
-    'eval-2': "linear-gradient(45deg, #ec407a, #d81b60)"
-};
 
+// Background gradient cho từng màn hình
+const stageBackgrounds = {
+    // Đã đổi 0, 1, 2 thành màu hồng
+    0: "linear-gradient(45deg, #ec407a, #d81b60)",
+    1: "linear-gradient(45deg, #ec407a, #d81b60)",
+    2: "linear-gradient(45deg, #ec407a, #d81b60)",
+    
+    'pain-map': "linear-gradient(to bottom, #ffebee, #ffcdd2)", 
+    3: "linear-gradient(to bottom, #e0f2f1, #b2dfdb)",
+    4: "linear-gradient(to bottom, #fff9c4, #fff176)",
+    5: "linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%)",
+    6: "linear-gradient(to top, #fce4ec, #f8bbd0)",
+    
+    // Các màn đánh giá & kết thúc cũng màu hồng
+    'eval-1': "linear-gradient(45deg, #ec407a, #d81b60)",
+    'eval-2': "linear-gradient(45deg, #ec407a, #d81b60)",
+    7: "linear-gradient(45deg, #ec407a, #d81b60)"
+};
 // ==========================================
 // 2. ĐĂNG NHẬP & BẮT ĐẦU
 // ==========================================
