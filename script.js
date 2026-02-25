@@ -22,25 +22,20 @@ let currentUser = {
 };
 
 // Background gradient cho từng màn hình
-
-// Background gradient cho từng màn hình
 const stageBackgrounds = {
-    // Đã đổi 0, 1, 2 thành màu hồng
-    0: "linear-gradient(45deg, #ec407a, #d81b60)",
-    1: "linear-gradient(45deg, #ec407a, #d81b60)",
-    2: "linear-gradient(45deg, #ec407a, #d81b60)",
-    
+    0: "linear-gradient(to bottom, #fffde7, #ffffff)",
+    1: "linear-gradient(to bottom, #a5d6a7, #e8f5e9)",
+    2: "linear-gradient(to bottom, #e0f7fa, #e0f7fa)",
     'pain-map': "linear-gradient(to bottom, #ffebee, #ffcdd2)", 
     3: "linear-gradient(to bottom, #e0f2f1, #b2dfdb)",
     4: "linear-gradient(to bottom, #fff9c4, #fff176)",
     5: "linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%)",
     6: "linear-gradient(to top, #fce4ec, #f8bbd0)",
-    
-    // Các màn đánh giá & kết thúc cũng màu hồng
-    'eval-1': "linear-gradient(45deg, #ec407a, #d81b60)",
-    'eval-2': "linear-gradient(45deg, #ec407a, #d81b60)",
-    7: "linear-gradient(45deg, #ec407a, #d81b60)"
+    'eval-1': "linear-gradient(to bottom, #e0f7fa, #b2ebf2)",
+    'eval-2': "linear-gradient(to bottom, #e0f7fa, #b2ebf2)",
+    7: "linear-gradient(to top, #fce4ec, #f8bbd0)"
 };
+
 // ==========================================
 // 2. ĐĂNG NHẬP & BẮT ĐẦU
 // ==========================================
@@ -160,39 +155,7 @@ function updateFinalEmotionDisplay() {
     
     if(navigator.vibrate) navigator.vibrate(5);
 }
-// Thêm hàm cập nhật giao diện mặt cười cho Đánh giá 1
-function updateEval1Display() {
-    const slider = document.getElementById('eval-1-range'); 
-    if (!slider) return; 
-    const val = parseInt(slider.value); 
-    const data = emotionLevels[val];
-    const emojiEl = document.getElementById('eval-1-emoji'); 
-    const statusEl = document.getElementById('eval-1-status');
-    
-    if (emojiEl) emojiEl.innerText = data.emoji;
-    if (statusEl) { 
-        statusEl.innerText = `${val} - ${data.text}`; 
-        statusEl.style.color = data.color; 
-    }
-    if(navigator.vibrate) navigator.vibrate(5);
-}
 
-// Thêm hàm cập nhật giao diện mặt cười cho Đánh giá 2
-function updateEval2Display() {
-    const slider = document.getElementById('eval-2-range'); 
-    if (!slider) return; 
-    const val = parseInt(slider.value); 
-    const data = emotionLevels[val];
-    const emojiEl = document.getElementById('eval-2-emoji'); 
-    const statusEl = document.getElementById('eval-2-status');
-    
-    if (emojiEl) emojiEl.innerText = data.emoji;
-    if (statusEl) { 
-        statusEl.innerText = `${val} - ${data.text}`; 
-        statusEl.style.color = data.color; 
-    }
-    if(navigator.vibrate) navigator.vibrate(5);
-}
 // ==========================================
 // 4. CHUYỂN TRANG (ROUTER ĐÃ TỐI ƯU CĂN GIỮA)
 // ==========================================
@@ -961,11 +924,9 @@ function deleteJourney(index) {
 
 // Khởi chạy khi load xong web
 document.addEventListener("DOMContentLoaded", function() { 
-    // Ép đổi màu nền ngay khi vừa mở web lên
-    document.body.style.background = stageBackgrounds[0];
-    
-    if(document.getElementById('welcome-modal')) { 
+    if(document.getElementById('welcome-modal')) {
         document.getElementById('welcome-modal').style.display = 'block'; 
-    } 
+    }
 });
+
 
