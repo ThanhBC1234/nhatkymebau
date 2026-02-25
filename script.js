@@ -155,7 +155,39 @@ function updateFinalEmotionDisplay() {
     
     if(navigator.vibrate) navigator.vibrate(5);
 }
+// Thêm hàm cập nhật giao diện mặt cười cho Đánh giá 1
+function updateEval1Display() {
+    const slider = document.getElementById('eval-1-range'); 
+    if (!slider) return; 
+    const val = parseInt(slider.value); 
+    const data = emotionLevels[val];
+    const emojiEl = document.getElementById('eval-1-emoji'); 
+    const statusEl = document.getElementById('eval-1-status');
+    
+    if (emojiEl) emojiEl.innerText = data.emoji;
+    if (statusEl) { 
+        statusEl.innerText = `${val} - ${data.text}`; 
+        statusEl.style.color = data.color; 
+    }
+    if(navigator.vibrate) navigator.vibrate(5);
+}
 
+// Thêm hàm cập nhật giao diện mặt cười cho Đánh giá 2
+function updateEval2Display() {
+    const slider = document.getElementById('eval-2-range'); 
+    if (!slider) return; 
+    const val = parseInt(slider.value); 
+    const data = emotionLevels[val];
+    const emojiEl = document.getElementById('eval-2-emoji'); 
+    const statusEl = document.getElementById('eval-2-status');
+    
+    if (emojiEl) emojiEl.innerText = data.emoji;
+    if (statusEl) { 
+        statusEl.innerText = `${val} - ${data.text}`; 
+        statusEl.style.color = data.color; 
+    }
+    if(navigator.vibrate) navigator.vibrate(5);
+}
 // ==========================================
 // 4. CHUYỂN TRANG (ROUTER ĐÃ TỐI ƯU CĂN GIỮA)
 // ==========================================
