@@ -15,6 +15,7 @@ let currentUser = {
     painAreas: '',      // Lưu vùng đau
     eval1: 5,           // Đánh giá 1
     eval2: 5,           // Đánh giá 2
+    usefulness: '',     // Sự hữu ích (đánh giá từng stage)
     capybaraMood: '',
     cloudThought: '',
     jarNote: '',
@@ -33,6 +34,7 @@ const stageBackgrounds = {
     6: "linear-gradient(to top, #fce4ec, #f8bbd0)",
     'eval-1': "linear-gradient(to bottom, #e0f7fa, #b2ebf2)",
     'eval-2': "linear-gradient(to bottom, #e0f7fa, #b2ebf2)",
+    'usefulness': "linear-gradient(to bottom, #e8f5e9, #c8e6c9)",
     7: "linear-gradient(to top, #fce4ec, #f8bbd0)"
 };
 
@@ -179,6 +181,7 @@ function switchStage(stageNum) {
     if (stageNum === 1) resetStage1();
     if (stageNum === 2) initDragon();
     if (stageNum === 'pain-map') initPainMap();
+    if (stageNum === 'usefulness') initUsefulnessEval();
     if (stageNum === 3) initBodyScan();
     if (stageNum === 5) { setTimeout(() => { const input = document.getElementById('thoughtInput'); if(input) input.focus(); }, 500); }
     if (stageNum === 6) {
@@ -414,14 +417,14 @@ window.addEventListener('touchend', releaseBreath);
 // 8. STAGE NỖI ĐAU (Đã chia tách Trái/Phải)
 // ==========================================
 const painAreasConfig = [
-    { id: 'head', name: 'Đầu/Cổ', points: [{ top: '25%', left: '50%' }] },
-    { id: 'shoulder_left', name: 'Vai trái', points: [{ top: '28%', left: '38%' }] },
-    { id: 'shoulder_right', name: 'Vai phải', points: [{ top: '28%', left: '62%' }] },
-    { id: 'chest', name: 'Ngực', points: [{ top: '38%', left: '50%' }] },
-    { id: 'belly', name: 'Bụng', points: [{ top: '53%', left: '50%' }] },
-    { id: 'hips', name: 'Hông/Lưng', points: [{ top: '63%', left: '50%' }] },
-    { id: 'leg_left', name: 'Chân trái', points: [{ top: '90%', left: '45%' }] },
-    { id: 'leg_right', name: 'Chân phải', points: [{ top: '90%', left: '55%' }] }
+    { id: 'head', name: 'Cổ và cơ hàm', points: [{ top: '25%', left: '50%' }], label: { side: 'right', offsetX: 55, offsetY: -5 } },
+    { id: 'shoulder_left', name: 'Vai trái', points: [{ top: '28%', left: '38%' }], label: { side: 'left', offsetX: -50, offsetY: 0 } },
+    { id: 'shoulder_right', name: 'Vai phải', points: [{ top: '28%', left: '62%' }], label: { side: 'right', offsetX: 50, offsetY: 0 } },
+    { id: 'chest', name: 'Lồng ngực', points: [{ top: '38%', left: '50%' }], label: { side: 'right', offsetX: 65, offsetY: 0 } },
+    { id: 'belly', name: 'Bụng', points: [{ top: '53%', left: '50%' }], label: { side: 'right', offsetX: 60, offsetY: 0 } },
+    { id: 'hips', name: 'Hông và thắt lưng', points: [{ top: '63%', left: '50%' }], label: { side: 'right', offsetX: 55, offsetY: 0 } },
+    { id: 'leg_left', name: 'Chân trái', points: [{ top: '90%', left: '45%' }], label: { side: 'left', offsetX: -45, offsetY: 0 } },
+    { id: 'leg_right', name: 'Chân phải', points: [{ top: '90%', left: '55%' }], label: { side: 'right', offsetX: 45, offsetY: 0 } }
 ];
 
 let selectedPainsThisSession = {}; 
@@ -459,6 +462,51 @@ function initPainMap() {
             
             dot.onclick = () => togglePainDot(area.id, area.name); 
             container.appendChild(dot);
+
+            // Thêm label text với đường nối
+            if (area.label) {
+                const labelWrapper = document.createElement('div');
+                labelWrapper.style.position = 'absolute';
+                labelWrapper.style.top = point.top;
+                labelWrapper.style.left = point.left;
+                labelWrapper.style.transform = 'translate(-50%, -50%)';
+                labelWrapper.style.zIndex = '5';
+                labelWrapper.style.pointerEvents = 'none';
+                labelWrapper.style.display = 'flex';
+                labelWrapper.style.alignItems = 'center';
+                labelWrapper.style.whiteSpace = 'nowrap';
+
+                const line = document.createElement('div');
+                line.style.width = Math.abs(area.label.offsetX) - 15 + 'px';
+                line.style.height = '1px';
+                line.style.background = '#555';
+                line.style.flexShrink = '0';
+
+                const text = document.createElement('span');
+                text.innerText = area.name;
+                text.style.fontSize = '11px';
+                text.style.color = '#333';
+                text.style.fontWeight = '600';
+                text.style.background = 'rgba(255,255,255,0.7)';
+                text.style.padding = '1px 4px';
+                text.style.borderRadius = '3px';
+
+                if (area.label.side === 'right') {
+                    labelWrapper.style.left = `calc(${point.left} + 18px)`;
+                    labelWrapper.style.transform = `translateY(calc(-50% + ${area.label.offsetY}px))`;
+                    labelWrapper.appendChild(line);
+                    labelWrapper.appendChild(text);
+                } else {
+                    labelWrapper.style.left = 'auto';
+                    labelWrapper.style.right = `calc(100% - ${parseFloat(point.left)}% + 18px)`;
+                    labelWrapper.style.transform = `translateY(calc(-50% + ${area.label.offsetY}px))`;
+                    labelWrapper.style.flexDirection = 'row-reverse';
+                    labelWrapper.appendChild(line);
+                    labelWrapper.appendChild(text);
+                    labelWrapper.style.flexDirection = 'row-reverse';
+                }
+                container.appendChild(labelWrapper);
+            }
         });
     });
 }
@@ -742,8 +790,130 @@ function triggerDroppingHeart() {
 }
 
 // ==========================================
-// 13. STAGE ĐÁNH GIÁ
+// 13. STAGE ĐÁNH GIÁ SỰ HỮU ÍCH
 // ==========================================
+
+const stageNames = {
+    1: 'Chuông "Dừng Lại"',
+    2: 'Thở cùng Rồng',
+    3: 'Cảm nhận nỗi đau',
+    4: 'Rà soát cơ thể',
+    5: 'Gọi tên cảm xúc',
+    6: 'Quan sát suy nghĩ',
+    7: 'Hũ Bình An'
+};
+
+const satisfactionLevels = {
+    1: { text: 'Rất không hài lòng', emoji: '😞', color: '#c62828' },
+    2: { text: 'Không hài lòng', emoji: '😕', color: '#e65100' },
+    3: { text: 'Bình thường', emoji: '😐', color: '#f57f17' },
+    4: { text: 'Hài lòng', emoji: '😊', color: '#558b2f' },
+    5: { text: 'Rất hài lòng', emoji: '😄', color: '#2e7d32' }
+};
+
+let stageRatings = {}; // { 1: 3, 2: 5, ... }
+
+function initUsefulnessEval() {
+    stageRatings = {};
+    updateStageSliderDisplay();
+    updateSatisfactionDisplay();
+    updateRatingSummary();
+}
+
+function updateStageSliderDisplay() {
+    const slider = document.getElementById('stage-select-range');
+    if (!slider) return;
+    const val = parseInt(slider.value);
+    const nameEl = document.getElementById('stage-select-name');
+    if (nameEl) nameEl.innerText = `Giai đoạn ${val}: ${stageNames[val]}`;
+    
+    // Nếu stage này đã có rating, set lại slider satisfaction
+    const satSlider = document.getElementById('satisfaction-range');
+    if (satSlider && stageRatings[val]) {
+        satSlider.value = stageRatings[val];
+    } else if (satSlider) {
+        satSlider.value = 3;
+    }
+    updateSatisfactionDisplay();
+}
+
+function updateSatisfactionDisplay() {
+    const slider = document.getElementById('satisfaction-range');
+    if (!slider) return;
+    const val = parseInt(slider.value);
+    const data = satisfactionLevels[val];
+    
+    const emojiEl = document.getElementById('satisfaction-emoji');
+    const statusEl = document.getElementById('satisfaction-status');
+    if (emojiEl) emojiEl.innerText = data.emoji;
+    if (statusEl) {
+        statusEl.innerText = `${val} - ${data.text}`;
+        statusEl.style.color = data.color;
+    }
+    if(navigator.vibrate) navigator.vibrate(5);
+}
+
+function saveCurrentStageRating() {
+    const stageSlider = document.getElementById('stage-select-range');
+    const satSlider = document.getElementById('satisfaction-range');
+    if (!stageSlider || !satSlider) return;
+    
+    const stageNum = parseInt(stageSlider.value);
+    const rating = parseInt(satSlider.value);
+    stageRatings[stageNum] = rating;
+    
+    updateRatingSummary();
+    
+    // Auto-chuyển sang stage tiếp theo nếu chưa hết
+    if (stageNum < 7) {
+        stageSlider.value = stageNum + 1;
+        updateStageSliderDisplay();
+    }
+}
+
+function updateRatingSummary() {
+    const summaryEl = document.getElementById('rating-summary');
+    if (!summaryEl) return;
+    
+    let html = '';
+    const ratedCount = Object.keys(stageRatings).length;
+    
+    for (let i = 1; i <= 7; i++) {
+        if (stageRatings[i]) {
+            const sat = satisfactionLevels[stageRatings[i]];
+            html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #eee;">
+                <span style="font-size:13px; color:#333;">${stageNames[i]}</span>
+                <span style="font-size:13px; font-weight:bold; color:${sat.color};">${sat.emoji} ${stageRatings[i]}/5</span>
+            </div>`;
+        } else {
+            html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #eee;">
+                <span style="font-size:13px; color:#aaa;">${stageNames[i]}</span>
+                <span style="font-size:13px; color:#ccc;">Chưa đánh giá</span>
+            </div>`;
+        }
+    }
+    
+    summaryEl.innerHTML = html;
+    
+    // Hiện nút hoàn thành khi đã đánh giá ít nhất 1 stage
+    const finishBtn = document.getElementById('finish-eval-btn');
+    if (finishBtn) {
+        finishBtn.style.display = ratedCount > 0 ? 'inline-block' : 'none';
+    }
+}
+
+function submitUsefulnessEval() {
+    // Tạo chuỗi kết quả
+    let parts = [];
+    for (let i = 1; i <= 7; i++) {
+        const score = stageRatings[i] || 'N/A';
+        parts.push(`Stage ${i}: ${score} điểm`);
+    }
+    currentUser.usefulness = parts.join(' | ');
+    
+    finishJourney();
+}
+
 function submitEval1() { 
     currentUser.eval1 = document.getElementById('eval-1-range').value; 
     switchStage('eval-2'); 
@@ -751,8 +921,6 @@ function submitEval1() {
 
 function submitEval2() { 
     currentUser.eval2 = document.getElementById('eval-2-range').value; 
-    
-    // ĐÃ SỬA: Đánh giá 2 là bước cuối cùng, gọi hàm lưu hành trình tại đây
     finishJourney(); 
 }
 
@@ -773,7 +941,7 @@ function finishJourney() {
     localStorage.setItem('myJourneys', JSON.stringify(history));
     
     // Hiển thị trạng thái đang lưu
-    const btn = document.querySelector('#stage-eval-2 .btn-start'); 
+    const btn = document.getElementById('finish-eval-btn'); 
     if (btn) { 
         btn.innerText = "Đang lưu..."; 
         btn.style.pointerEvents = 'none'; 
@@ -826,6 +994,7 @@ function goBack() {
     
     // ĐÃ SỬA: Sắp xếp lại thứ tự lùi cho 3 trang cuối
     if (currentStage === 7) { switchStage(6); return; }          // Cảm xúc cuối lùi về Hũ
+    if (currentStage === 'usefulness') { switchStage(7); return; } // Đánh giá hữu ích lùi về Cảm xúc cuối
     if (currentStage === 'eval-1') { switchStage(7); return; }   // Đánh giá 1 lùi về Cảm xúc cuối
     if (currentStage === 'eval-2') { switchStage('eval-1'); return; } // Đánh giá 2 lùi về Đánh giá 1
     
