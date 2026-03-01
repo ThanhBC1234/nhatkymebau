@@ -16,6 +16,7 @@ let currentUser = {
     eval1: 5,           // Đánh giá 1
     eval2: 5,           // Đánh giá 2
     usefulness: '',     // Sự hữu ích (đánh giá từng stage)
+    otherFeedback: '',  // Ý kiến khác
     capybaraMood: '',
     cloudThought: '',
     jarNote: '',
@@ -838,6 +839,10 @@ function submitUsefulnessEval() {
         parts.push(`Stage ${i}: ${score} điểm`);
     }
     currentUser.usefulness = parts.join(' | ');
+    
+    const feedbackEl = document.getElementById('other-feedback');
+    currentUser.otherFeedback = feedbackEl ? feedbackEl.value.trim() : '';
+    
     finishJourney();
 }
 
