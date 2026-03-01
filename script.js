@@ -2,7 +2,7 @@
 // 1. CẤU HÌNH & BIẾN TOÀN CỤC
 // ==========================================
 // THAY LINK GOOGLE SCRIPT MỚI NHẤT CỦA BẠN VÀO ĐÂY (NẾU CÓ DEPLOY LẠI)
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxPF-6htdt3s_ANFly1PmRYe6w7de3u4aExNXbA8QIHvUfgM6EbZPzNsIjMdKLw4zGp/exec'; 
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwW1mBcKo2XtpxuzuApfbEL4Kxok9ulfv1TnuKimQfGt6f59NVzwAm8bXgdDsALwbw/exec'; 
 const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6YfzmkVPwief31DVP7UnzWS6Wz-wiAOlrvr0fkHbMpgq8lw/viewform'; 
 let currentStage = 0; 
 let userName = "Chị";
@@ -440,6 +440,12 @@ function initPainMap() {
         <path d="M 120 135 Q 100 195 140 245 L 155 255 L 120 135 Z" fill="#FFCCBC" />
         <path d="M 200 135 Q 220 195 180 245 L 165 255 L 200 135 Z" fill="#FFCCBC" />
         <circle cx="160" cy="70" r="38" fill="#FFCCBC" />
+        <!-- Vương miện -->
+        <polygon points="130,38 135,12 145,28 155,5 165,28 175,5 185,28 195,12 200,38" fill="#FFD700" stroke="#FFC107" stroke-width="1.5" stroke-linejoin="round"/>
+        <circle cx="135" cy="14" r="3" fill="#E91E63"/>
+        <circle cx="155" cy="7" r="3" fill="#E91E63"/>
+        <circle cx="175" cy="7" r="3" fill="#E91E63"/>
+        <circle cx="195" cy="14" r="3" fill="#E91E63"/>
         <path d="M 124 60 Q 160 75 196 60 Q 196 45 160 40 Q 124 45 124 60 Z" fill="#5D4037" />
     </svg>`;
     
@@ -793,16 +799,6 @@ function triggerDroppingHeart() {
 // 13. STAGE ĐÁNH GIÁ SỰ HỮU ÍCH
 // ==========================================
 
-const stageNames = {
-    1: 'Chuông "Dừng Lại"',
-    2: 'Thở cùng Rồng',
-    3: 'Cảm nhận nỗi đau',
-    4: 'Rà soát cơ thể',
-    5: 'Gọi tên cảm xúc',
-    6: 'Quan sát suy nghĩ',
-    7: 'Hũ Bình An'
-};
-
 const satisfactionLevels = {
     1: { text: 'Rất không hài lòng', emoji: '😞', color: '#c62828' },
     2: { text: 'Không hài lòng', emoji: '😕', color: '#e65100' },
@@ -811,106 +807,34 @@ const satisfactionLevels = {
     5: { text: 'Rất hài lòng', emoji: '😄', color: '#2e7d32' }
 };
 
-let stageRatings = {}; // { 1: 3, 2: 5, ... }
-
-function initUsefulnessEval() {
-    stageRatings = {};
-    updateStageSliderDisplay();
-    updateSatisfactionDisplay();
-    updateRatingSummary();
-}
-
-function updateStageSliderDisplay() {
-    const slider = document.getElementById('stage-select-range');
-    if (!slider) return;
-    const val = parseInt(slider.value);
-    const nameEl = document.getElementById('stage-select-name');
-    if (nameEl) nameEl.innerText = `Giai đoạn ${val}: ${stageNames[val]}`;
-    
-    // Nếu stage này đã có rating, set lại slider satisfaction
-    const satSlider = document.getElementById('satisfaction-range');
-    if (satSlider && stageRatings[val]) {
-        satSlider.value = stageRatings[val];
-    } else if (satSlider) {
-        satSlider.value = 3;
-    }
-    updateSatisfactionDisplay();
-}
-
-function updateSatisfactionDisplay() {
-    const slider = document.getElementById('satisfaction-range');
-    if (!slider) return;
+function updateSatLabel(stageNum) {
+    const slider = document.querySelector(`.sat-slider[data-stage="${stageNum}"]`);
+    const label = document.getElementById(`sat-label-${stageNum}`);
+    if (!slider || !label) return;
     const val = parseInt(slider.value);
     const data = satisfactionLevels[val];
-    
-    const emojiEl = document.getElementById('satisfaction-emoji');
-    const statusEl = document.getElementById('satisfaction-status');
-    if (emojiEl) emojiEl.innerText = data.emoji;
-    if (statusEl) {
-        statusEl.innerText = `${val} - ${data.text}`;
-        statusEl.style.color = data.color;
-    }
-    if(navigator.vibrate) navigator.vibrate(5);
+    label.innerText = `${data.emoji} ${val}`;
+    label.style.color = data.color;
+    if (navigator.vibrate) navigator.vibrate(5);
 }
 
-function saveCurrentStageRating() {
-    const stageSlider = document.getElementById('stage-select-range');
-    const satSlider = document.getElementById('satisfaction-range');
-    if (!stageSlider || !satSlider) return;
-    
-    const stageNum = parseInt(stageSlider.value);
-    const rating = parseInt(satSlider.value);
-    stageRatings[stageNum] = rating;
-    
-    updateRatingSummary();
-    
-    // Auto-chuyển sang stage tiếp theo nếu chưa hết
-    if (stageNum < 7) {
-        stageSlider.value = stageNum + 1;
-        updateStageSliderDisplay();
-    }
-}
-
-function updateRatingSummary() {
-    const summaryEl = document.getElementById('rating-summary');
-    if (!summaryEl) return;
-    
-    let html = '';
-    const ratedCount = Object.keys(stageRatings).length;
-    
+function initUsefulnessEval() {
+    // Reset tất cả slider về 3
     for (let i = 1; i <= 7; i++) {
-        if (stageRatings[i]) {
-            const sat = satisfactionLevels[stageRatings[i]];
-            html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #eee;">
-                <span style="font-size:13px; color:#333;">${stageNames[i]}</span>
-                <span style="font-size:13px; font-weight:bold; color:${sat.color};">${sat.emoji} ${stageRatings[i]}/5</span>
-            </div>`;
-        } else {
-            html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #eee;">
-                <span style="font-size:13px; color:#aaa;">${stageNames[i]}</span>
-                <span style="font-size:13px; color:#ccc;">Chưa đánh giá</span>
-            </div>`;
-        }
-    }
-    
-    summaryEl.innerHTML = html;
-    
-    // Hiện nút hoàn thành khi đã đánh giá ít nhất 1 stage
-    const finishBtn = document.getElementById('finish-eval-btn');
-    if (finishBtn) {
-        finishBtn.style.display = ratedCount > 0 ? 'inline-block' : 'none';
+        const slider = document.querySelector(`.sat-slider[data-stage="${i}"]`);
+        if (slider) slider.value = 3;
+        updateSatLabel(i);
     }
 }
 
 function submitUsefulnessEval() {
-    // Tạo chuỗi kết quả
     let parts = [];
     for (let i = 1; i <= 7; i++) {
-        const score = stageRatings[i] || 'N/A';
+        const slider = document.querySelector(`.sat-slider[data-stage="${i}"]`);
+        const score = slider ? parseInt(slider.value) : 'N/A';
         parts.push(`Stage ${i}: ${score} điểm`);
     }
     currentUser.usefulness = parts.join(' | ');
-    
     finishJourney();
 }
 
@@ -1097,6 +1021,5 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('welcome-modal').style.display = 'block'; 
     }
 });
-
 
 
