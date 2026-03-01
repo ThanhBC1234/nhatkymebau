@@ -2,7 +2,7 @@
 // 1. CẤU HÌNH & BIẾN TOÀN CỤC
 // ==========================================
 // THAY LINK GOOGLE SCRIPT MỚI NHẤT CỦA BẠN VÀO ĐÂY (NẾU CÓ DEPLOY LẠI)
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwW1mBcKo2XtpxuzuApfbEL4Kxok9ulfv1TnuKimQfGt6f59NVzwAm8bXgdDsALwbw/exec'; 
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxU0G7ykbZVEN_bj3aWTflvh4cDdNVQoy0qGw4DZyHIELY7kCuQwt-UPOztLYHGvc3q/exec'; 
 const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd6YfzmkVPwief31DVP7UnzWS6Wz-wiAOlrvr0fkHbMpgq8lw/viewform'; 
 let currentStage = 0; 
 let userName = "Chị";
@@ -1029,3 +1029,4 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('welcome-modal').style.display = 'block'; 
     }
 });
+
