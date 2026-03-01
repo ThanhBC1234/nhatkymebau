@@ -440,13 +440,15 @@ function initPainMap() {
         <path d="M 120 135 Q 100 195 140 245 L 155 255 L 120 135 Z" fill="#FFCCBC" />
         <path d="M 200 135 Q 220 195 180 245 L 165 255 L 200 135 Z" fill="#FFCCBC" />
         <circle cx="160" cy="70" r="38" fill="#FFCCBC" />
-        <!-- Vương miện -->
-        <polygon points="130,38 135,12 145,28 155,5 165,28 175,5 185,28 195,12 200,38" fill="#FFD700" stroke="#FFC107" stroke-width="1.5" stroke-linejoin="round"/>
-        <circle cx="135" cy="14" r="3" fill="#E91E63"/>
-        <circle cx="155" cy="7" r="3" fill="#E91E63"/>
-        <circle cx="175" cy="7" r="3" fill="#E91E63"/>
-        <circle cx="195" cy="14" r="3" fill="#E91E63"/>
-        <path d="M 124 60 Q 160 75 196 60 Q 196 45 160 40 Q 124 45 124 60 Z" fill="#5D4037" />
+        <!-- Tóc phủ kín đầu -->
+        <path d="M 122 70 Q 122 38 145 33 Q 160 30 175 33 Q 198 38 198 70 Q 195 55 175 48 Q 160 44 145 48 Q 125 55 122 70 Z" fill="#5D4037" />
+        <path d="M 124 72 Q 124 58 140 50 Q 150 46 155 55 L 125 72 Z" fill="#4E342E" />
+        <path d="M 196 72 Q 196 58 180 50 Q 170 46 165 55 L 195 72 Z" fill="#4E342E" />
+        <!-- Vương miện (căn giữa) -->
+        <polygon points="133,36 138,10 148,26 160,3 172,26 182,10 187,36" fill="#FFD700" stroke="#FFC107" stroke-width="1.5" stroke-linejoin="round"/>
+        <circle cx="138" cy="12" r="3" fill="#E91E63"/>
+        <circle cx="160" cy="5" r="3" fill="#E91E63"/>
+        <circle cx="182" cy="12" r="3" fill="#E91E63"/>
     </svg>`;
     
     painAreasConfig.forEach(area => {
@@ -578,7 +580,6 @@ function initBodyScan() {
     
     containerBody.innerHTML = `
     <svg id="pregnant-standing-svg" viewBox="0 0 320 480" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; transition: all 1.2s ease-in-out;">
-        <path d="M 130 60 Q 160 40 190 60 L 195 90 Q 160 100 125 90 Z" fill="#5D4037" />
         <rect x="135" y="430" width="20" height="50" fill="#FFCCBC" /> 
         <rect x="165" y="430" width="20" height="50" fill="#FFCCBC" /> 
         <rect x="150" y="105" width="20" height="25" fill="#FFCCBC" />
@@ -596,7 +597,9 @@ function initBodyScan() {
             <path d="M 165 75 Q 173 68 181 75" fill="none" stroke="#5D4037" stroke-width="2" />
             <path d="M 152 90 Q 160 98 168 90" fill="none" stroke="#5D4037" stroke-width="2" />
         </g>
-        <path d="M 124 60 Q 160 75 196 60 Q 196 45 160 40 Q 124 45 124 60 Z" fill="#5D4037" />
+        <path d="M 122 70 Q 122 38 145 33 Q 160 30 175 33 Q 198 38 198 70 Q 195 55 175 48 Q 160 44 145 48 Q 125 55 122 70 Z" fill="#5D4037" />
+        <path d="M 124 72 Q 124 58 140 50 Q 150 46 155 55 L 125 72 Z" fill="#4E342E" />
+        <path d="M 196 72 Q 196 58 180 50 Q 170 46 165 55 L 195 72 Z" fill="#4E342E" />
     </svg>`;
     
     bodySteps.forEach((step, idx) => {
@@ -1021,5 +1024,3 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('welcome-modal').style.display = 'block'; 
     }
 });
-
-
