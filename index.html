@@ -238,49 +238,75 @@
     </div>
 
     <div id="stage-usefulness" class="stage">
-        <div class="welcome-container" style="width: 90%; max-width: 500px; margin: 0 auto; padding: 20px; text-align: center; background: white; border-radius: 20px;">
+        <div class="welcome-container" style="width: 90%; max-width: 500px; margin: 0 auto; padding: 20px; text-align: center; background: white; border-radius: 20px; max-height: 90vh; overflow-y: auto;">
             
             <h2 style="color: black; font-weight: 900; margin-bottom: 5px;">Đánh giá sự hữu ích</h2>
-            <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Chọn giai đoạn → đánh giá mức hài lòng → nhấn Lưu</p>
+            <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Kéo thanh trượt để đánh giá từng giai đoạn</p>
 
-            <!-- Slider 1: Chọn giai đoạn -->
-            <div style="background: #f5f5f5; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-                <div style="font-size: 13px; color: #888; margin-bottom: 8px; font-weight: bold;">CHỌN GIAI ĐOẠN</div>
-                <div id="stage-select-name" style="font-size: 18px; font-weight: bold; color: #00796b; margin-bottom: 10px;">Giai đoạn 1: Chuông "Dừng Lại"</div>
-                <input type="range" id="stage-select-range" min="1" max="7" value="1" 
-                    oninput="updateStageSliderDisplay()"
-                    style="width: 100%; height: 12px; border-radius: 10px; outline: none; -webkit-appearance: none; cursor: pointer; background: linear-gradient(to right, #b2dfdb, #00897b);">
-                <div style="display: flex; justify-content: space-between; margin-top: 6px; color: #999; font-size: 12px; font-weight: bold;">
-                    <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
+            <div id="stage-rating-1" class="stage-rating-block" style="background:#f5f5f5; padding:12px 15px; border-radius:12px; margin-bottom:10px; text-align:left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-size:13px; font-weight:bold; color:#00796b;">1. Chuông "Dừng Lại"</span>
+                    <span id="sat-label-1" style="font-size:13px; font-weight:bold; color:#f57f17;">😐 3</span>
                 </div>
+                <input type="range" class="sat-slider" data-stage="1" min="1" max="5" value="3" oninput="updateSatLabel(1)" style="width:100%; height:10px; border-radius:8px; outline:none; -webkit-appearance:none; cursor:pointer; background:linear-gradient(to right, #ef5350, #ff9800, #fdd835, #66bb6a, #2e7d32);">
+                <div style="display:flex; justify-content:space-between; font-size:10px; color:#aaa; margin-top:3px;"><span>Rất không hài lòng</span><span>Rất hài lòng</span></div>
             </div>
 
-            <!-- Slider 2: Mức hài lòng -->
-            <div style="background: #f5f5f5; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
-                <div style="font-size: 13px; color: #888; margin-bottom: 8px; font-weight: bold;">MỨC HÀI LÒNG</div>
-                <div id="satisfaction-emoji" style="font-size: 50px; margin-bottom: 5px;">😐</div>
-                <div id="satisfaction-status" style="font-size: 18px; font-weight: bold; color: #f57f17; margin-bottom: 10px;">3 - Bình thường</div>
-                <input type="range" id="satisfaction-range" min="1" max="5" value="3" 
-                    oninput="updateSatisfactionDisplay()"
-                    style="width: 100%; height: 12px; border-radius: 10px; outline: none; -webkit-appearance: none; cursor: pointer; background: linear-gradient(to right, #ef5350, #ff9800, #fdd835, #66bb6a, #2e7d32);">
-                <div style="display: flex; justify-content: space-between; margin-top: 6px; color: #999; font-size: 11px; font-weight: bold;">
-                    <span>Rất không<br>hài lòng</span>
-                    <span>Không<br>hài lòng</span>
-                    <span>Bình<br>thường</span>
-                    <span>Hài<br>lòng</span>
-                    <span>Rất<br>hài lòng</span>
+            <div id="stage-rating-2" class="stage-rating-block" style="background:#f5f5f5; padding:12px 15px; border-radius:12px; margin-bottom:10px; text-align:left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-size:13px; font-weight:bold; color:#00796b;">2. Thở cùng Rồng</span>
+                    <span id="sat-label-2" style="font-size:13px; font-weight:bold; color:#f57f17;">😐 3</span>
                 </div>
+                <input type="range" class="sat-slider" data-stage="2" min="1" max="5" value="3" oninput="updateSatLabel(2)" style="width:100%; height:10px; border-radius:8px; outline:none; -webkit-appearance:none; cursor:pointer; background:linear-gradient(to right, #ef5350, #ff9800, #fdd835, #66bb6a, #2e7d32);">
+                <div style="display:flex; justify-content:space-between; font-size:10px; color:#aaa; margin-top:3px;"><span>Rất không hài lòng</span><span>Rất hài lòng</span></div>
             </div>
 
-            <button onclick="saveCurrentStageRating()" style="background: #00897b; color: white; border: none; padding: 12px 30px; border-radius: 30px; font-size: 15px; cursor: pointer; font-weight: bold; margin-bottom: 15px; width: 100%;">✓ Lưu đánh giá giai đoạn này</button>
-
-            <!-- Bảng tóm tắt -->
-            <div style="background: #fafafa; padding: 12px; border-radius: 10px; margin-bottom: 15px; text-align: left; border: 1px solid #e0e0e0;">
-                <div style="font-size: 13px; color: #888; font-weight: bold; margin-bottom: 8px; text-align: center;">TỔNG KẾT ĐÁNH GIÁ</div>
-                <div id="rating-summary"></div>
+            <div id="stage-rating-3" class="stage-rating-block" style="background:#f5f5f5; padding:12px 15px; border-radius:12px; margin-bottom:10px; text-align:left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-size:13px; font-weight:bold; color:#00796b;">3. Cảm nhận nỗi đau</span>
+                    <span id="sat-label-3" style="font-size:13px; font-weight:bold; color:#f57f17;">😐 3</span>
+                </div>
+                <input type="range" class="sat-slider" data-stage="3" min="1" max="5" value="3" oninput="updateSatLabel(3)" style="width:100%; height:10px; border-radius:8px; outline:none; -webkit-appearance:none; cursor:pointer; background:linear-gradient(to right, #ef5350, #ff9800, #fdd835, #66bb6a, #2e7d32);">
+                <div style="display:flex; justify-content:space-between; font-size:10px; color:#aaa; margin-top:3px;"><span>Rất không hài lòng</span><span>Rất hài lòng</span></div>
             </div>
 
-            <button id="finish-eval-btn" onclick="submitUsefulnessEval()" style="display: none; background: #d81b60; color: white; border: none; padding: 15px 40px; border-radius: 30px; font-size: 16px; cursor: pointer; font-weight: bold; width: 100%;">Hoàn thành hành trình</button>
+            <div id="stage-rating-4" class="stage-rating-block" style="background:#f5f5f5; padding:12px 15px; border-radius:12px; margin-bottom:10px; text-align:left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-size:13px; font-weight:bold; color:#00796b;">4. Rà soát cơ thể</span>
+                    <span id="sat-label-4" style="font-size:13px; font-weight:bold; color:#f57f17;">😐 3</span>
+                </div>
+                <input type="range" class="sat-slider" data-stage="4" min="1" max="5" value="3" oninput="updateSatLabel(4)" style="width:100%; height:10px; border-radius:8px; outline:none; -webkit-appearance:none; cursor:pointer; background:linear-gradient(to right, #ef5350, #ff9800, #fdd835, #66bb6a, #2e7d32);">
+                <div style="display:flex; justify-content:space-between; font-size:10px; color:#aaa; margin-top:3px;"><span>Rất không hài lòng</span><span>Rất hài lòng</span></div>
+            </div>
+
+            <div id="stage-rating-5" class="stage-rating-block" style="background:#f5f5f5; padding:12px 15px; border-radius:12px; margin-bottom:10px; text-align:left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-size:13px; font-weight:bold; color:#00796b;">5. Gọi tên cảm xúc</span>
+                    <span id="sat-label-5" style="font-size:13px; font-weight:bold; color:#f57f17;">😐 3</span>
+                </div>
+                <input type="range" class="sat-slider" data-stage="5" min="1" max="5" value="3" oninput="updateSatLabel(5)" style="width:100%; height:10px; border-radius:8px; outline:none; -webkit-appearance:none; cursor:pointer; background:linear-gradient(to right, #ef5350, #ff9800, #fdd835, #66bb6a, #2e7d32);">
+                <div style="display:flex; justify-content:space-between; font-size:10px; color:#aaa; margin-top:3px;"><span>Rất không hài lòng</span><span>Rất hài lòng</span></div>
+            </div>
+
+            <div id="stage-rating-6" class="stage-rating-block" style="background:#f5f5f5; padding:12px 15px; border-radius:12px; margin-bottom:10px; text-align:left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-size:13px; font-weight:bold; color:#00796b;">6. Quan sát suy nghĩ</span>
+                    <span id="sat-label-6" style="font-size:13px; font-weight:bold; color:#f57f17;">😐 3</span>
+                </div>
+                <input type="range" class="sat-slider" data-stage="6" min="1" max="5" value="3" oninput="updateSatLabel(6)" style="width:100%; height:10px; border-radius:8px; outline:none; -webkit-appearance:none; cursor:pointer; background:linear-gradient(to right, #ef5350, #ff9800, #fdd835, #66bb6a, #2e7d32);">
+                <div style="display:flex; justify-content:space-between; font-size:10px; color:#aaa; margin-top:3px;"><span>Rất không hài lòng</span><span>Rất hài lòng</span></div>
+            </div>
+
+            <div id="stage-rating-7" class="stage-rating-block" style="background:#f5f5f5; padding:12px 15px; border-radius:12px; margin-bottom:15px; text-align:left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-size:13px; font-weight:bold; color:#00796b;">7. Hũ Bình An</span>
+                    <span id="sat-label-7" style="font-size:13px; font-weight:bold; color:#f57f17;">😐 3</span>
+                </div>
+                <input type="range" class="sat-slider" data-stage="7" min="1" max="5" value="3" oninput="updateSatLabel(7)" style="width:100%; height:10px; border-radius:8px; outline:none; -webkit-appearance:none; cursor:pointer; background:linear-gradient(to right, #ef5350, #ff9800, #fdd835, #66bb6a, #2e7d32);">
+                <div style="display:flex; justify-content:space-between; font-size:10px; color:#aaa; margin-top:3px;"><span>Rất không hài lòng</span><span>Rất hài lòng</span></div>
+            </div>
+
+            <button id="finish-eval-btn" onclick="submitUsefulnessEval()" style="background: #d81b60; color: white; border: none; padding: 15px 40px; border-radius: 30px; font-size: 16px; cursor: pointer; font-weight: bold; width: 100%;">Hoàn thành hành trình</button>
         </div>
     </div>
 
